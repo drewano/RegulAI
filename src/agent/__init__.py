@@ -1,0 +1,1 @@
+"""Agent LangGraph pour interaction avec le serveur MCP Légifrance.""" 

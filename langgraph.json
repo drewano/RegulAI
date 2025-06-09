@@ -1,0 +1,7 @@
+{
+    "dependencies": ["./src/regulai"],
+    "graphs": {
+        "regulai_agent": "./src/regulai/agent.py:create_agent"
+    },
+    "env": ".env"
+} 

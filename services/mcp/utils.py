@@ -17,6 +17,9 @@ def get_access_token() -> str:
     if not all([client_id, client_secret, token_url]):
         raise ValueError("Les variables d'environnement OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, et OAUTH_TOKEN_URL sont requises.")
 
+    # Assurance pour le type checker que token_url n'est pas None après la vérification
+    assert token_url is not None
+
     print("Demande d'un jeton d'accès (access token) à PISTE...")
     
     # Le corps de la requête pour obtenir le token
@@ -62,7 +65,7 @@ def create_mcp_from_openapi() -> FastMCP:
     access_token = get_access_token()
 
     # 3. Charger le fichier de spécification OpenAPI
-    project_root = Path(__file__).parent.parent
+    project_root = Path(__file__).parent.parent.parent
     spec_path = project_root / "openapi.json"
     if not spec_path.exists():
         raise FileNotFoundError(f"Fichier openapi.json non trouvé à l'emplacement : {spec_path}")

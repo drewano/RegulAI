@@ -1,0 +1,74 @@
+{
+  "timestamp": "True",
+  "mcp_server_available": false,
+  "tools_count": 3,
+  "tools": [
+    {
+      "name": "search_legifrance",
+      "description": "Paramètres pour la recherche dans Légifrance.",
+      "schema": {
+        "properties": {
+          "query": {
+            "description": "Requête de recherche en français (ex: 'congés payés', 'droit du travail')",
+            "title": "Query",
+            "type": "string"
+          },
+          "max_results": {
+            "default": 10,
+            "description": "Nombre maximum de résultats à retourner",
+            "title": "Max Results",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_article",
+      "description": "Paramètres pour récupérer un article spécifique.",
+      "schema": {
+        "properties": {
+          "article_id": {
+            "description": "Identifiant de l'article (ex: 'LEGIARTI000006900846' ou 'L3141-1')",
+            "title": "Article Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "article_id"
+        ]
+      }
+    },
+    {
+      "name": "browse_code",
+      "description": "Paramètres pour naviguer dans un code juridique.",
+      "schema": {
+        "properties": {
+          "code_name": {
+            "description": "Nom du code juridique (ex: 'Code du travail', 'Code civil')",
+            "title": "Code Name",
+            "type": "string"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Section spécifique à explorer (optionnel)",
+            "title": "Section"
+          }
+        },
+        "required": [
+          "code_name"
+        ]
+      }
+    }
+  ]
+}
