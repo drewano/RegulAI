@@ -5,7 +5,7 @@ Ce module teste les fonctionnalités des outils MCP et leur intégration LangCha
 """
 
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 import os
 import sys
 
@@ -97,16 +97,22 @@ def test_mcp_client_parse_response():
 @patch('httpx.Client')
 def test_mcp_client_connection_test(mock_httpx_client):
     """Test la vérification de connexion MCP."""
+    
     # Mock de la réponse HTTP
     mock_response = Mock()
     mock_response.status_code = 200
     
+    # Créer un mock pour la session HTTP qui fonctionne comme context manager
     mock_session = Mock()
     mock_session.get.return_value = mock_response
-    mock_session.__enter__.return_value = mock_session
-    mock_session.__exit__.return_value = None
     
-    mock_httpx_client.return_value = mock_session
+    # Utiliser MagicMock pour supporter automatiquement les context managers
+    mock_context_manager = MagicMock()
+    mock_context_manager.__enter__.return_value = mock_session
+    mock_context_manager.__exit__.return_value = None
+    
+    # Le Client() retourne le context manager
+    mock_httpx_client.return_value = mock_context_manager
     
     # Test de connexion
     client = MCPClient("http://test:8000")

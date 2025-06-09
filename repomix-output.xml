@@ -1,0 +1,2127 @@
+This file is a merged representation of a subset of the codebase, containing files not matching ignore patterns, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching these patterns are excluded: openapi.json
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.env.example
+.gitignore
+examples/__init__.py
+examples/simple_conversation.py
+langgraph.json
+PROJET_STRUCTURE.md
+pyproject.toml
+scripts/__init__.py
+scripts/validate_tools.py
+services/__init__.py
+services/mcp/__init__.py
+services/mcp/main.py
+services/mcp/utils.py
+src/regulai/__init__.py
+src/regulai/agent.py
+src/regulai/config.py
+src/regulai/graph.py
+src/regulai/tools.py
+tests/__init__.py
+tests/conftest.py
+tests/test_tools.py
+tools_validation_report.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path=".env.example">
+# Configuration RegulAI
+OPENAI_API_KEY=your_key_here
+MCP_SERVER_URL=http://localhost:8000
+MCP_TIMEOUT=30
+MODEL_NAME=gpt-4o-mini
+MODEL_TEMPERATURE=0.0
+MAX_ITERATIONS=20
+DEFAULT_MAX_RESULTS=10
+LOG_LEVEL=INFO
+</file>
+
+<file path=".gitignore">
+.env
+.venv
+repomix.config.json
+repomix-output.xml
+.repomixignore
+.pytest_cache
+</file>
+
+<file path="examples/__init__.py">
+# Exemples d'utilisation du package RegulAI
+</file>
+
+<file path="examples/simple_conversation.py">
+#!/usr/bin/env python3
+"""
+Exemple simple d'utilisation de l'agent RegulAI.
+
+Ce script démontre comment utiliser l'agent RegulAI pour une conversation
+basique sur le droit français.
+"""
+
+import os
+import sys
+
+# Ajouter le répertoire src au PYTHONPATH pour les imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from regulai.agent import create_agent, run_agent_conversation, stream_agent_conversation
+from regulai.config import get_config
+
+
+def exemple_conversation_simple():
+    """Exemple de conversation simple avec l'agent."""
+    print("🤖 RegulAI - Exemple de Conversation Simple")
+    print("=" * 60)
+    
+    try:
+        # Vérifier la configuration
+        config = get_config()
+        print(f"📋 Configuration:")
+        print(f"   - Modèle: {config.model_name}")
+        print(f"   - Serveur MCP: {config.mcp_server_url}")
+        print(f"   - API Key configurée: {'✅' if config.openai_api_key else '❌'}")
+        
+        if not config.openai_api_key:
+            print("\n❌ OPENAI_API_KEY n'est pas configuré")
+            print("Veuillez copier .env.example vers .env et remplir votre clé API")
+            return
+        
+        # Créer l'agent
+        print(f"\n🏗️  Création de l'agent...")
+        agent = create_agent()
+        print("✅ Agent créé avec succès")
+        
+        # Messages d'exemple
+        messages_test = [
+            "Bonjour ! Peux-tu m'expliquer ce qu'est le droit du travail en France ?",
+            "Comment fonctionne la recherche dans Légifrance ?",
+            "Peux-tu rechercher des informations sur les congés payés ?",
+        ]
+        
+        for i, message in enumerate(messages_test, 1):
+            print(f"\n" + "─" * 60)
+            print(f"💬 Exemple {i}: {message}")
+            print("─" * 60)
+            
+            # Utiliser l'agent pour répondre
+            response = run_agent_conversation(
+                message, 
+                thread_id=f"exemple-{i}",
+                agent=agent
+            )
+            
+            print(f"🤖 Réponse: {response}")
+        
+        print(f"\n" + "=" * 60)
+        print("✅ Tous les exemples ont été exécutés avec succès !")
+        
+    except Exception as e:
+        print(f"\n❌ Erreur: {e}")
+        print("\nVérifiez votre configuration et réessayez.")
+
+
+def exemple_conversation_streaming():
+    """Exemple de conversation avec streaming en temps réel."""
+    print("\n🌊 RegulAI - Exemple avec Streaming")
+    print("=" * 60)
+    
+    try:
+        # Créer l'agent
+        agent = create_agent()
+        
+        # Message de test pour le streaming
+        message = "Peux-tu me donner un aperçu complet du Code du travail français ?"
+        print(f"💬 Question: {message}")
+        print("🤖 Réponse en streaming:")
+        print("─" * 40)
+        
+        # Utiliser le streaming
+        for step in stream_agent_conversation(message, "streaming-example", agent):
+            if "messages" in step:
+                last_message = step["messages"][-1]
+                if hasattr(last_message, 'content') and last_message.content:
+                    # Afficher le contenu s'il ne s'agit pas d'appels d'outils
+                    if not hasattr(last_message, 'tool_calls') or not last_message.tool_calls:
+                        print(f"📝 {last_message.content}")
+                    else:
+                        print(f"🔧 [Appel d'outils en cours...]")
+        
+        print("─" * 40)
+        print("✅ Streaming terminé")
+        
+    except Exception as e:
+        print(f"❌ Erreur lors du streaming: {e}")
+
+
+def main():
+    """Fonction principale."""
+    print("🚀 Exemples d'utilisation de RegulAI")
+    print("=" * 60)
+    
+    # Vérifier les dépendances
+    try:
+        import regulai
+        print("✅ Package RegulAI importé avec succès")
+    except ImportError as e:
+        print(f"❌ Erreur d'import: {e}")
+        print("Assurez-vous d'avoir installé le package avec: pip install -e .")
+        return
+    
+    # Exécuter les exemples
+    try:
+        exemple_conversation_simple()
+        print("\n" + "="*20)
+        exemple_conversation_streaming()
+        
+    except KeyboardInterrupt:
+        print("\n\n👋 Arrêt demandé par l'utilisateur")
+    except Exception as e:
+        print(f"\n❌ Erreur générale: {e}")
+        import traceback
+        traceback.print_exc()
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="langgraph.json">
+{
+    "dependencies": ["./src/regulai"],
+    "graphs": {
+        "regulai_agent": "./src/regulai/agent.py:create_agent"
+    },
+    "env": ".env"
+}
+</file>
+
+<file path="PROJET_STRUCTURE.md">
+# Structure du Projet RegulAI
+
+## 🎯 Objectif
+
+Construire un agent IA avec LangGraph qui interagit avec le serveur MCP Légifrance existant. L'architecture suit le pattern client-serveur où le serveur MCP s'exécute comme un service indépendant et l'agent LangGraph agit comme un client HTTP.
+
+## 📁 Structure des Fichiers
+
+```
+RegulAI/
+├── src/
+│   ├── mcp/                    # Serveur MCP existant
+│   └── agent/                  # 🆕 Nouvel agent LangGraph
+│       ├── __init__.py         # Package Python
+│       ├── main.py             # Agent principal (ReAct)
+│       ├── tools.py            # Interface HTTP vers MCP
+│       ├── test_agent.py       # Tests avec outils simulés
+│       └── README.md           # Documentation agent
+├── pyproject.toml              # ✅ Dépendances mises à jour
+├── README.md                   # Documentation projet
+└── PROJET_STRUCTURE.md         # Ce fichier
+```
+
+## 🏗️ Architecture
+
+L'agent utilise l'**API fonctionnelle de LangGraph** avec les décorateurs :
+- `@task` : Tâches individuelles (call_model, call_tool)
+- `@entrypoint` : Workflow principal avec persistance
+- **Pattern ReAct** : Reasoning → Action → Observation
+
+## 📦 Dépendances Ajoutées
+
+```toml
+dependencies = [
+    "fastmcp @ git+https://github.com/jlowin/fastmcp.git",  # Existant
+    "langgraph>=0.2.16",           # 🆕 Framework principal
+    "langchain-openai>=0.2.0",     # 🆕 Provider LLM
+    "langchain-core>=0.3.0",       # 🆕 Messages et outils
+    "httpx>=0.27.0",               # 🆕 Client HTTP
+    "pydantic>=2.0.0"              # 🆕 Validation données
+]
+```
+
+## 🔧 Composants Principaux
+
+### 1. Agent Principal (`main.py`)
+- **Architecture ReAct** avec boucle raisonnement/action
+- **Persistance** des conversations via MemorySaver
+- **Streaming** des réponses en temps réel
+- **Gestion d'erreurs** robuste
+
+### 2. Interface MCP (`tools.py`)
+- **Client HTTP** vers le serveur MCP (localhost:8000)
+- **Conversion** outils MCP → format LangChain
+- **Outils disponibles** :
+  - `search_legifrance` : Recherche textes juridiques
+  - `get_article` : Récupération article par ID
+  - `browse_code` : Navigation codes juridiques
+
+### 3. Tests Simulés (`test_agent.py`)
+- **Tests indépendants** sans serveur MCP
+- **Outils mockés** avec données réalistes
+- **Validation** du pattern ReAct
+
+## 🚀 Utilisation
+
+### Installation
+```bash
+pip install langgraph langchain-openai langchain-core httpx pydantic
+```
+
+### Test rapide
+```bash
+python src/agent/test_agent.py
+```
+
+### Utilisation avec serveur MCP
+```python
+from src.agent.main import agent
+from langchain_core.messages import HumanMessage
+
+# Configuration
+config = {"configurable": {"thread_id": "session-123"}}
+message = HumanMessage(content="Quelles sont les règles sur les congés payés?")
+
+# Exécution
+for step in agent.stream([message], config=config):
+    for task_name, result in step.items():
+        if task_name != "agent":
+            print(f"{task_name}: {result}")
+```
+
+## 📋 Prochaines Étapes
+
+### Phase 1 : Tests et Validation ✅
+- [x] Structure du projet créée
+- [x] Agent LangGraph implémenté
+- [x] Interface HTTP vers MCP
+- [x] Tests simulés fonctionnels
+- [x] Outils avec décorateur @tool
+- [x] Schémas Pydantic pour validation
+- [x] Scripts de validation et exemples
+
+### Phase 2 : Intégration MCP
+- [ ] Démarrer le serveur MCP Légifrance
+- [ ] Tester l'intégration complète
+- [ ] Récupération dynamique des outils MCP
+- [ ] Améliorer le parsing des réponses
+
+### Phase 3 : Fonctionnalités Avancées
+- [ ] Interface web (Streamlit/FastAPI)
+- [ ] Cache des requêtes fréquentes
+- [ ] Métriques et observabilité
+- [ ] Tests automatisés complets
+
+### Phase 4 : Production
+- [ ] Déploiement containerisé
+- [ ] Configuration via variables d'environnement
+- [ ] Monitoring et alertes
+- [ ] Documentation utilisateur
+
+## 🔍 Points d'Attention
+
+1. **Variables d'environnement** : OPENAI_API_KEY requis
+2. **Serveur MCP** : Doit être démarré sur localhost:8000
+3. **Format des réponses** : Adapter le parsing selon l'API MCP
+4. **Gestion d'erreurs** : Timeout HTTP, erreurs réseau
+5. **Rate limiting** : Limites API OpenAI et Légifrance
+
+## 📚 Documentation de Référence
+
+- **LangGraph Functional API** : how-tos/react-agent-from-scratch-functional.ipynb
+- **Pattern ReAct** : Reasoning and Acting avec outils
+- **MCP Protocol** : Model Context Protocol pour l'interopérabilité
+- **Légifrance API** : Base de données juridique française
+
+L'architecture est maintenant prête pour les tests d'intégration avec le serveur MCP réel ! 🎉
+</file>
+
+<file path="pyproject.toml">
+[project]
+name = "regulai"
+version = "0.2.0"
+description = "Agent IA ReAct avec intégration MCP pour recherche juridique"
+authors = [
+    {name = "RegulAI Team", email = "team@regulai.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    # "fastmcp @ git+https://github.com/jlowin/fastmcp.git",  # Temporairement commenté
+    "langgraph>=0.2.16",
+    "langchain-openai>=0.2.0",
+    "langchain-core>=0.3.0",
+    "httpx>=0.27.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.10.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0"
+]
+
+[project.scripts]
+regulai = "regulai.agent:main"
+regulai-validate = "scripts.validate_tools:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+src_paths = ["src", "scripts", "examples", "tests"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+</file>
+
+<file path="scripts/__init__.py">
+# Scripts d'administration et de maintenance pour RegulAI
+</file>
+
+<file path="scripts/validate_tools.py">
+"""
+Script de validation des outils LangGraph Légifrance.
+
+Ce script vérifie que tous les outils sont correctement configurés
+et peuvent être utilisés par l'agent LangGraph.
+"""
+
+import json
+import os
+import sys
+from typing import Dict, Any
+
+# Ajouter le répertoire src au PYTHONPATH pour les imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from regulai.tools import get_available_tools, test_mcp_connection, get_mcp_server_info
+from regulai.config import get_config
+
+
+def validate_tool_structure(tool) -> Dict[str, Any]:
+    """
+    Valide la structure d'un outil LangChain.
+    
+    Args:
+        tool: Outil à valider
+        
+    Returns:
+        Dictionnaire avec les résultats de validation
+    """
+    validation = {
+        "name": tool.name,
+        "has_description": bool(tool.description),
+        "has_args_schema": hasattr(tool, 'args_schema') and tool.args_schema is not None,
+        "schema_fields": [],
+        "errors": []
+    }
+    
+    # Vérifier le schéma d'arguments
+    if validation["has_args_schema"]:
+        try:
+            schema = tool.args_schema.schema()
+            validation["schema_fields"] = list(schema.get("properties", {}).keys())
+            validation["schema_valid"] = True
+        except Exception as e:
+            validation["errors"].append(f"Erreur schéma: {e}")
+            validation["schema_valid"] = False
+    else:
+        validation["errors"].append("Pas de schéma d'arguments défini")
+        validation["schema_valid"] = False
+    
+    # Vérifier que l'outil est invocable
+    try:
+        # Test avec des arguments vides pour vérifier la structure
+        tool.get_input_schema()
+        validation["invocable"] = True
+    except Exception as e:
+        validation["errors"].append(f"Outil non invocable: {e}")
+        validation["invocable"] = False
+    
+    return validation
+
+
+def test_tool_invocation(tool, test_args: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Teste l'invocation d'un outil avec des arguments de test.
+    
+    Args:
+        tool: Outil à tester
+        test_args: Arguments de test
+        
+    Returns:
+        Résultats du test
+    """
+    test_result = {
+        "tool_name": tool.name,
+        "test_args": test_args,
+        "success": False,
+        "response": None,
+        "error": None,
+        "response_length": 0
+    }
+    
+    try:
+        response = tool.invoke(test_args)
+        test_result["success"] = True
+        test_result["response"] = response
+        test_result["response_length"] = len(str(response))
+        
+        # Vérifier que la réponse n'est pas une erreur
+        response_str = str(response).lower()
+        if any(error_keyword in response_str for error_keyword in ["erreur", "error", "connexion", "timeout"]):
+            test_result["warning"] = "La réponse semble contenir une erreur"
+            
+    except Exception as e:
+        test_result["error"] = str(e)
+    
+    return test_result
+
+
+def validate_all_tools():
+    """Valide tous les outils disponibles."""
+    print("🔍 Validation des outils LangGraph Légifrance")
+    print("=" * 60)
+    
+    # 1. Tester la connexion MCP
+    print("\n📡 Test de connexion MCP")
+    print("-" * 30)
+    
+    mcp_available = test_mcp_connection()
+    if mcp_available:
+        print("✅ Serveur MCP accessible")
+        server_info = get_mcp_server_info()
+        if server_info:
+            print(f"📊 Info serveur: {json.dumps(server_info, indent=2)}")
+    else:
+        print("⚠️  Serveur MCP non accessible - les tests d'invocation pourraient échouer")
+    
+    # 2. Récupérer et valider les outils
+    print("\n🔧 Validation de la structure des outils")
+    print("-" * 40)
+    
+    tools = get_available_tools()
+    print(f"Nombre d'outils trouvés: {len(tools)}")
+    
+    validation_results = []
+    for tool in tools:
+        validation = validate_tool_structure(tool)
+        validation_results.append(validation)
+        
+        # Afficher les résultats
+        print(f"\n📝 Outil: {validation['name']}")
+        print(f"   Description: {'✅' if validation['has_description'] else '❌'}")
+        print(f"   Schéma args: {'✅' if validation['has_args_schema'] else '❌'}")
+        print(f"   Invocable: {'✅' if validation['invocable'] else '❌'}")
+        print(f"   Champs: {validation['schema_fields']}")
+        
+        if validation['errors']:
+            print(f"   ⚠️  Erreurs: {validation['errors']}")
+    
+    # 3. Tests d'invocation
+    print("\n🚀 Tests d'invocation des outils")
+    print("-" * 35)
+    
+    # Arguments de test pour chaque outil
+    test_cases = {
+        "search_legifrance": {"query": "test validation", "max_results": 1},
+        "get_article": {"article_id": "L3141-1"},
+        "browse_code": {"code_name": "Code du travail", "section": "L3141"}
+    }
+    
+    invocation_results = []
+    for tool in tools:
+        if tool.name in test_cases:
+            test_args = test_cases[tool.name]
+            result = test_tool_invocation(tool, test_args)
+            invocation_results.append(result)
+            
+            # Afficher les résultats
+            print(f"\n🧪 Test {tool.name}")
+            print(f"   Arguments: {test_args}")
+            print(f"   Succès: {'✅' if result['success'] else '❌'}")
+            print(f"   Longueur réponse: {result['response_length']} chars")
+            
+            if result['error']:
+                print(f"   ❌ Erreur: {result['error']}")
+            elif result.get('warning'):
+                print(f"   ⚠️  {result['warning']}")
+            elif result['success']:
+                # Afficher un aperçu de la réponse
+                response_preview = str(result['response'])[:100]
+                print(f"   📄 Aperçu: {response_preview}...")
+    
+    # 4. Résumé des résultats
+    print("\n📊 Résumé de la validation")
+    print("=" * 30)
+    
+    total_tools = len(tools)
+    valid_structure = sum(1 for v in validation_results if v['invocable'] and v['has_args_schema'])
+    successful_invocations = sum(1 for r in invocation_results if r['success'])
+    
+    print(f"Outils totaux: {total_tools}")
+    print(f"Structure valide: {valid_structure}/{total_tools}")
+    print(f"Invocations réussies: {successful_invocations}/{len(test_cases)}")
+    
+    # Statut global
+    if valid_structure == total_tools and (not mcp_available or successful_invocations > 0):
+        print("\n✅ Validation globale: SUCCÈS")
+        return True
+    else:
+        print("\n❌ Validation globale: ÉCHEC")
+        if valid_structure != total_tools:
+            print("   - Problèmes de structure des outils")
+        if mcp_available and successful_invocations == 0:
+            print("   - Aucune invocation réussie malgré serveur MCP disponible")
+        return False
+
+
+def generate_tools_report():
+    """Génère un rapport détaillé des outils."""
+    print("\n📋 Génération du rapport des outils")
+    print("-" * 40)
+    
+    tools = get_available_tools()
+    
+    report = {
+        "timestamp": str(type(None).__module__ == "builtins" and True),  # Simple timestamp
+        "mcp_server_available": test_mcp_connection(),
+        "tools_count": len(tools),
+        "tools": []
+    }
+    
+    for tool in tools:
+        tool_info = {
+            "name": tool.name,
+            "description": tool.description,
+            "schema": None
+        }
+        
+        # Extraire le schéma
+        try:
+            if hasattr(tool, 'args_schema') and tool.args_schema:
+                schema = tool.args_schema.schema()
+                tool_info["schema"] = {
+                    "properties": schema.get("properties", {}),
+                    "required": schema.get("required", [])
+                }
+        except Exception as e:
+            tool_info["schema_error"] = str(e)
+        
+        report["tools"].append(tool_info)
+    
+    # Sauvegarder le rapport
+    try:
+        with open("tools_validation_report.json", "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2, ensure_ascii=False)
+        print("✅ Rapport sauvegardé: tools_validation_report.json")
+    except Exception as e:
+        print(f"❌ Erreur sauvegarde rapport: {e}")
+    
+    return report
+
+
+def main():
+    """Fonction principale de validation."""
+    try:
+        # Validation complète
+        success = validate_all_tools()
+        
+        # Génération du rapport
+        generate_tools_report()
+        
+        # Statut final
+        if success:
+            print("\n🎉 Validation terminée avec succès!")
+            print("Les outils sont prêts pour l'utilisation avec l'agent LangGraph.")
+        else:
+            print("\n⚠️  Validation terminée avec des problèmes.")
+            print("Vérifiez les erreurs ci-dessus avant d'utiliser l'agent.")
+        
+        return success
+        
+    except Exception as e:
+        print(f"\n❌ Erreur durant la validation: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="services/__init__.py">
+# Services externes autonomes
+</file>
+
+<file path="services/mcp/__init__.py">
+# Service MCP autonome
+</file>
+
+<file path="services/mcp/main.py">
+# src/main.py
+import os
+import signal
+import sys
+from dotenv import load_dotenv
+from utils import create_mcp_from_openapi
+
+# Charger les variables d'environnement depuis un fichier .env
+load_dotenv()
+
+print("Création du serveur MCP à partir de la spécification OpenAPI...")
+
+# Créer l'instance du serveur en utilisant notre fonction utilitaire
+mcp = create_mcp_from_openapi()
+
+print(f"Serveur MCP '{mcp.name}' créé avec succès. Démarrage...")
+
+def signal_handler(signum, frame):
+    """
+    Gestionnaire de signal pour un arrêt propre du serveur
+    """
+    print("\n🛑 Arrêt du serveur demandé...")
+    print("👋 Serveur arrêté proprement!")
+    sys.exit(0)
+
+# Le bloc d'exécution principal
+if __name__ == "__main__":
+    # Configurer le gestionnaire de signal pour Ctrl+C (SIGINT)
+    signal.signal(signal.SIGINT, signal_handler)
+    
+    # Récupérer l'hôte et le port depuis les variables d'environnement, avec des valeurs par défaut
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "8000"))
+
+    try:
+        print(f"🚀 Serveur démarré sur http://{host}:{port}")
+        print("💡 Appuyez sur Ctrl+C pour arrêter le serveur")
+        
+        # Lancer le serveur avec le transport HTTP recommandé pour ce cas d'usage
+        # Voir : https://gofastmcp.com/deployment/running-server#streamable-http
+        mcp.run(transport="streamable-http", host=host, port=port)
+    except KeyboardInterrupt:
+        # Au cas où le signal handler ne capture pas l'interruption
+        print("\n🛑 Arrêt du serveur demandé...")
+        print("👋 Serveur arrêté proprement!")
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Erreur lors du démarrage du serveur : {e}")
+        sys.exit(1)
+</file>
+
+<file path="services/mcp/utils.py">
+# src/utils.py
+import os
+import json
+import httpx
+from pathlib import Path
+from fastmcp import FastMCP
+
+def get_access_token() -> str:
+    """
+    Récupère un jeton d'accès (access token) auprès du serveur OAuth de PISTE
+    en utilisant les identifiants client (Client Credentials).
+    """
+    client_id = os.getenv("OAUTH_CLIENT_ID")
+    client_secret = os.getenv("OAUTH_CLIENT_SECRET")
+    token_url = os.getenv("OAUTH_TOKEN_URL")
+
+    if not all([client_id, client_secret, token_url]):
+        raise ValueError("Les variables d'environnement OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, et OAUTH_TOKEN_URL sont requises.")
+
+    # Assurance pour le type checker que token_url n'est pas None après la vérification
+    assert token_url is not None
+
+    print("Demande d'un jeton d'accès (access token) à PISTE...")
+    
+    # Le corps de la requête pour obtenir le token
+    data = {
+        "grant_type": "client_credentials",
+        "client_id": client_id,
+        "client_secret": client_secret,
+    }
+
+    try:
+        # On utilise un client synchrone ici car c'est une action unique au démarrage
+        response = httpx.post(token_url, data=data)
+        response.raise_for_status()  # Lève une exception si la requête échoue (ex: 401, 500)
+        
+        token_data = response.json()
+        access_token = token_data.get("access_token")
+
+        if not access_token:
+            raise ValueError("La réponse du serveur OAuth ne contient pas d'access_token.")
+            
+        print("Jeton d'accès obtenu avec succès !")
+        return access_token
+
+    except httpx.HTTPStatusError as e:
+        print(f"Erreur HTTP lors de l'obtention du token : {e.response.status_code}")
+        print(f"Réponse du serveur : {e.response.text}")
+        raise
+    except Exception as e:
+        print(f"Une erreur inattendue est survenue lors de l'obtention du token : {e}")
+        raise
+
+
+def create_mcp_from_openapi() -> FastMCP:
+    """
+    Crée une instance de serveur FastMCP à partir de la spécification OpenAPI de Légifrance.
+    """
+    # 1. Récupérer l'URL de base de l'API
+    api_base_url = os.getenv("API_BASE_URL")
+    if not api_base_url:
+        raise ValueError("La variable d'environnement API_BASE_URL n'est pas définie.")
+
+    # 2. Obtenir le jeton d'accès via OAuth 2.0
+    access_token = get_access_token()
+
+    # 3. Charger le fichier de spécification OpenAPI
+    project_root = Path(__file__).parent.parent.parent
+    spec_path = project_root / "openapi.json"
+    if not spec_path.exists():
+        raise FileNotFoundError(f"Fichier openapi.json non trouvé à l'emplacement : {spec_path}")
+
+    with open(spec_path, "r", encoding="utf-8") as f:
+        openapi_spec = json.load(f)
+
+    # 4. Configurer le client HTTP avec le jeton d'accès obtenu
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        # L'API PISTE requiert aussi ce header pour les appels
+        "accept": "application/json",
+    }
+    
+    http_client = httpx.AsyncClient(base_url=api_base_url, headers=headers)
+
+    # 5. Générer le serveur MCP
+    server_name = openapi_spec.get("info", {}).get("title", "Légifrance MCP Server")
+    
+    mcp_server = FastMCP.from_openapi(
+        openapi_spec=openapi_spec,
+        client=http_client,
+        name=server_name,
+        timeout=30.0
+    )
+
+    return mcp_server
+</file>
+
+<file path="src/regulai/__init__.py">
+"""
+RegulAI - Agent IA ReAct avec intégration MCP pour recherche juridique.
+
+Ce package contient l'agent LangGraph principal et ses composants.
+"""
+
+__version__ = "0.2.0"
+__author__ = "RegulAI Team"
+
+from .agent import create_agent
+from .config import RegulAIConfig
+
+__all__ = ["create_agent", "RegulAIConfig"]
+</file>
+
+<file path="src/regulai/agent.py">
+"""
+Agent RegulAI principal avec architecture StateGraph.
+
+Ce module assemble les nœuds définis dans graph.py pour créer l'agent LangGraph
+complet avec persistance et streaming.
+"""
+
+from typing import Optional, Any, Dict
+from langchain_core.messages import HumanMessage
+from langchain_core.runnables import RunnableConfig
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+from langgraph.checkpoint.memory import MemorySaver
+from langgraph.graph.graph import CompiledGraph
+
+from .config import get_config
+from .graph import AgentState, call_model, call_tools, should_continue
+
+
+def create_agent(checkpointer: Optional[MemorySaver] = None) -> CompiledGraph:
+    """
+    Crée et compile l'agent RegulAI avec architecture StateGraph.
+    
+    Args:
+        checkpointer: Checkpointer pour la persistance (utilise MemorySaver par défaut)
+        
+    Returns:
+        Agent LangGraph compilé et prêt à utiliser
+        
+    Raises:
+        ValueError: Si la configuration est invalide
+    """
+    # Valider la configuration
+    config = get_config()
+    
+    # Créer le StateGraph avec l'état AgentState
+    workflow = StateGraph(AgentState)
+    
+    # Ajouter les nœuds
+    workflow.add_node("agent", call_model)
+    workflow.add_node("tools", call_tools)
+    
+    # Définir le point d'entrée
+    workflow.set_entry_point("agent")
+    
+    # Ajouter les arêtes conditionnelles
+    workflow.add_conditional_edges(
+        "agent",
+        should_continue,
+        {
+            "tools": "tools",
+            "__end__": END,
+        },
+    )
+    
+    # Après les outils, retourner à l'agent
+    workflow.add_edge("tools", "agent")
+    
+    # Compiler le graphe avec un checkpointer
+    if checkpointer is None:
+        checkpointer = MemorySaver()
+    
+    compiled_graph = workflow.compile(checkpointer=checkpointer)
+    
+    return compiled_graph
+
+
+def run_agent_conversation(
+    message: str, 
+    thread_id: str = "default-session",
+    agent: Optional[CompiledGraph] = None
+) -> str:
+    """
+    Lance une conversation avec l'agent RegulAI.
+    
+    Args:
+        message: Message de l'utilisateur
+        thread_id: ID de session pour la persistance
+        agent: Instance de l'agent (créée automatiquement si None)
+        
+    Returns:
+        Réponse finale de l'agent
+        
+    Raises:
+        ValueError: Si la configuration est invalide
+    """
+    if agent is None:
+        agent = create_agent()
+    
+    # Créer le message utilisateur
+    user_message = HumanMessage(content=message)
+    
+    # Configuration pour la persistance
+    config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+    
+    # Invoquer l'agent
+    result = agent.invoke(
+        {"messages": [user_message]},
+        config=config
+    )
+    
+    # Récupérer la réponse finale
+    if result and "messages" in result:
+        last_message = result["messages"][-1]
+        if hasattr(last_message, 'content'):
+            return last_message.content
+    
+    return "Aucune réponse de l'agent"
+
+
+def stream_agent_conversation(
+    message: str,
+    thread_id: str = "default-session", 
+    agent: Optional[CompiledGraph] = None
+):
+    """
+    Lance une conversation avec streaming avec l'agent RegulAI.
+    
+    Args:
+        message: Message de l'utilisateur
+        thread_id: ID de session pour la persistance
+        agent: Instance de l'agent (créée automatiquement si None)
+        
+    Yields:
+        Étapes intermédiaires et réponse finale de l'agent
+        
+    Raises:
+        ValueError: Si la configuration est invalide
+    """
+    if agent is None:
+        agent = create_agent()
+    
+    # Créer le message utilisateur
+    user_message = HumanMessage(content=message)
+    
+    # Configuration pour la persistance
+    config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+    
+    # Streamer les étapes
+    for step in agent.stream(
+        {"messages": [user_message]},
+        config=config,
+        stream_mode="values"
+    ):
+        yield step
+
+
+def main():
+    """
+    Fonction principale pour tester l'agent RegulAI.
+    
+    Lance une conversation de test avec l'agent et affiche les résultats.
+    """
+    try:
+        print("🤖 Agent RegulAI - Test de démarrage")
+        print("=" * 50)
+        
+        # Vérifier la configuration
+        config = get_config()
+        if not config.openai_api_key:
+            print("❌ Erreur: OPENAI_API_KEY non configuré")
+            print("Copiez .env.example vers .env et remplissez votre clé API OpenAI")
+            return
+        
+        print(f"✅ Configuration validée")
+        print(f"   - Modèle: {config.model_name}")
+        print(f"   - Serveur MCP: {config.mcp_server_url}")
+        print(f"   - Temperature: {config.model_temperature}")
+        
+        # Créer l'agent
+        print("\n📝 Création de l'agent...")
+        agent = create_agent()
+        print("✅ Agent créé avec succès")
+        
+        # Message de test
+        test_message = "Bonjour ! Peux-tu m'aider à rechercher des informations sur les congés payés en France ?"
+        print(f"\n👤 Utilisateur: {test_message}")
+        print("\n🤖 Agent RegulAI:")
+        print("-" * 30)
+        
+        # Lancer la conversation avec streaming
+        for step in stream_agent_conversation(test_message, "test-session", agent):
+            if "messages" in step:
+                last_message = step["messages"][-1]
+                if hasattr(last_message, 'content') and last_message.content:
+                    # Afficher seulement les nouveaux contenus (pas les appels d'outils)
+                    if not hasattr(last_message, 'tool_calls') or not last_message.tool_calls:
+                        print(f"💬 {last_message.content}")
+        
+        print("\n" + "=" * 50)
+        print("✅ Test terminé avec succès !")
+        
+    except Exception as e:
+        print(f"\n❌ Erreur lors du test: {e}")
+        print("\nVérifiez votre configuration :")
+        print("1. OPENAI_API_KEY est défini dans .env")
+        print("2. Le serveur MCP est démarré (optionnel pour ce test)")
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="src/regulai/config.py">
+"""
+Configuration centralisée pour RegulAI avec validation Pydantic.
+
+Ce module gère toutes les variables d'environnement et paramètres de configuration
+du projet de manière type-safe avec validation automatique.
+"""
+
+from typing import Optional
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
+
+class RegulAIConfig(BaseSettings):
+    """Configuration centralisée avec validation Pydantic."""
+    
+    # ==========================================
+    # Configuration Serveur MCP  
+    # ==========================================
+    mcp_server_url: str = Field(
+        default="http://localhost:8000",
+        description="URL du serveur MCP Légifrance"
+    )
+    mcp_timeout: int = Field(
+        default=30,
+        description="Timeout en secondes pour les requêtes MCP"
+    )
+    
+    # ==========================================
+    # Configuration LLM
+    # ==========================================
+    openai_api_key: Optional[str] = Field(
+        default=None,
+        description="Clé API OpenAI pour le modèle de langage"
+    )
+    model_name: str = Field(
+        default="gpt-4o-mini",
+        description="Nom du modèle OpenAI à utiliser"
+    )
+    model_temperature: float = Field(
+        default=0.0,
+        ge=0.0,
+        le=2.0,
+        description="Température du modèle (0.0 = déterministe, 2.0 = très créatif)"
+    )
+    
+    # ==========================================
+    # Configuration Agent
+    # ==========================================
+    max_iterations: int = Field(
+        default=20,
+        ge=1,
+        le=100,
+        description="Nombre maximum d'itérations pour l'agent ReAct"
+    )
+    default_max_results: int = Field(
+        default=10,
+        ge=1,
+        le=50,
+        description="Nombre par défaut de résultats pour les recherches"
+    )
+    
+    # ==========================================
+    # Configuration Logging
+    # ==========================================
+    log_level: str = Field(
+        default="INFO",
+        description="Niveau de logging (DEBUG, INFO, WARNING, ERROR, CRITICAL)"
+    )
+    log_format: str = Field(
+        default="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        description="Format des logs"
+    )
+    
+    # ==========================================
+    # Configuration Persistance
+    # ==========================================
+    thread_id: Optional[str] = Field(
+        default=None,
+        description="ID de thread par défaut pour la persistance des conversations"
+    )
+    
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": False,
+        "validate_assignment": True,
+        "env_prefix": "",
+    }
+    
+    def validate_openai_key(self) -> str:
+        """Valide que la clé OpenAI est présente."""
+        if not self.openai_api_key:
+            raise ValueError(
+                "OPENAI_API_KEY est requis. "
+                "Définissez la variable d'environnement ou copiez .env.example vers .env"
+            )
+        return self.openai_api_key
+
+
+# Fonction pour créer une instance de configuration avec validation
+def create_config() -> RegulAIConfig:
+    """
+    Crée et valide une instance de configuration.
+    
+    Returns:
+        Instance configurée et validée de RegulAIConfig
+        
+    Raises:
+        ValueError: Si une configuration requise est manquante
+    """
+    config = RegulAIConfig()
+    # La validation de la clé OpenAI sera faite lors de la création de l'agent
+    return config
+
+
+# Instance globale de configuration (lazy loading)
+_config: Optional[RegulAIConfig] = None
+
+
+def get_config() -> RegulAIConfig:
+    """
+    Récupère l'instance de configuration globale.
+    
+    Returns:
+        Instance configurée de RegulAIConfig
+    """
+    global _config
+    if _config is None:
+        _config = create_config()
+    return _config
+
+
+def reload_config() -> RegulAIConfig:
+    """
+    Recharge la configuration depuis les variables d'environnement.
+    
+    Utile pour les tests ou les changements de configuration à l'exécution.
+    
+    Returns:
+        Nouvelle instance de RegulAIConfig
+    """
+    global _config
+    _config = create_config()
+    return _config
+</file>
+
+<file path="src/regulai/graph.py">
+"""
+Définition de l'état et des nœuds du graphe LangGraph pour l'agent RegulAI.
+
+Ce module contient la structure de données de l'état de l'agent et les fonctions
+des nœuds qui composent le workflow ReAct.
+"""
+
+from typing import TypedDict, Literal, List, Dict, Any
+from langchain_core.messages import BaseMessage, ToolMessage, AIMessage
+from langchain_openai import ChatOpenAI
+
+from .config import get_config
+from .tools import get_available_tools
+
+
+# =============================================================================
+# ÉTAT DU GRAPHE (StateGraph)
+# =============================================================================
+
+class AgentState(TypedDict):
+    """
+    État de l'agent RegulAI pour le StateGraph.
+    
+    Attributes:
+        messages: Liste des messages de la conversation
+    """
+    messages: List[BaseMessage]
+
+
+# =============================================================================
+# CONFIGURATION ET OUTILS
+# =============================================================================
+
+def get_configured_model() -> ChatOpenAI:
+    """
+    Crée une instance configurée du modèle OpenAI.
+    
+    Returns:
+        Instance configurée de ChatOpenAI
+        
+    Raises:
+        ValueError: Si la clé API OpenAI n'est pas configurée
+    """
+    config = get_config()
+    
+    # Valider la clé API
+    if not config.openai_api_key:
+        raise ValueError(
+            "OPENAI_API_KEY est requis. "
+            "Définissez la variable d'environnement ou copiez .env.example vers .env"
+        )
+    
+    # Définir la variable d'environnement si elle n'est pas déjà définie
+    import os
+    if not os.environ.get("OPENAI_API_KEY"):
+        os.environ["OPENAI_API_KEY"] = config.openai_api_key
+    
+    return ChatOpenAI(
+        model=config.model_name,
+        temperature=config.model_temperature
+    )
+
+
+def get_tools_dict() -> Dict[str, Any]:
+    """
+    Récupère les outils disponibles sous forme de dictionnaire.
+    
+    Returns:
+        Dictionnaire des outils indexés par nom
+    """
+    tools = get_available_tools()
+    return {tool.name: tool for tool in tools}
+
+
+# =============================================================================
+# NŒUDS DU GRAPHE
+# =============================================================================
+
+def call_model(state: AgentState) -> Dict[str, List[BaseMessage]]:
+    """
+    Nœud qui appelle le modèle de langage avec les messages actuels.
+    
+    Args:
+        state: État actuel de l'agent
+        
+    Returns:
+        Dictionnaire avec la nouvelle liste de messages incluant la réponse du modèle
+    """
+    model = get_configured_model()
+    tools = get_available_tools()
+    
+    # Lier les outils au modèle et invoquer
+    response = model.bind_tools(tools).invoke(state["messages"])
+    
+    # Retourner l'état mis à jour avec la réponse du modèle
+    return {"messages": [response]}
+
+
+def call_tools(state: AgentState) -> Dict[str, List[BaseMessage]]:
+    """
+    Nœud qui exécute les outils appelés par le modèle.
+    
+    Args:
+        state: État actuel de l'agent
+        
+    Returns:
+        Dictionnaire avec les messages des résultats des outils
+    """
+    # Récupérer le dernier message (doit être un AIMessage avec tool_calls)
+    last_message = state["messages"][-1]
+    
+    if not isinstance(last_message, AIMessage) or not last_message.tool_calls:
+        return {"messages": []}
+    
+    # Récupérer les outils disponibles
+    tools_dict = get_tools_dict()
+    tool_messages = []
+    
+    # Exécuter chaque outil appelé
+    for tool_call in last_message.tool_calls:
+        tool_name = tool_call["name"]
+        
+        if tool_name in tools_dict:
+            tool = tools_dict[tool_name]
+            try:
+                # Invoquer l'outil avec ses arguments
+                result = tool.invoke(tool_call["args"])
+                
+                # Créer un ToolMessage avec le résultat
+                tool_message = ToolMessage(
+                    content=str(result),
+                    tool_call_id=tool_call["id"]
+                )
+                tool_messages.append(tool_message)
+                
+            except Exception as e:
+                # En cas d'erreur, créer un message d'erreur
+                error_message = ToolMessage(
+                    content=f"Erreur lors de l'exécution de {tool_name}: {e}",
+                    tool_call_id=tool_call["id"]
+                )
+                tool_messages.append(error_message)
+        else:
+            # Outil non trouvé
+            error_message = ToolMessage(
+                content=f"Outil '{tool_name}' non disponible",
+                tool_call_id=tool_call["id"]
+            )
+            tool_messages.append(error_message)
+    
+    return {"messages": tool_messages}
+
+
+# =============================================================================
+# FONCTIONS CONDITIONNELLES
+# =============================================================================
+
+def should_continue(state: AgentState) -> Literal["tools", "__end__"]:
+    """
+    Détermine si l'agent doit continuer avec les outils ou terminer.
+    
+    Args:
+        state: État actuel de l'agent
+        
+    Returns:
+        "tools" si des outils doivent être exécutés, "__end__" pour terminer
+    """
+    # Récupérer le dernier message
+    last_message = state["messages"][-1]
+    
+    # Si c'est un AIMessage avec des appels d'outils, continuer
+    if isinstance(last_message, AIMessage) and last_message.tool_calls:
+        return "tools"
+    
+    # Sinon, terminer
+    return "__end__"
+
+
+# =============================================================================
+# FONCTIONS UTILITAIRES
+# =============================================================================
+
+def validate_state(state: AgentState) -> bool:
+    """
+    Valide que l'état de l'agent est correct.
+    
+    Args:
+        state: État à valider
+        
+    Returns:
+        True si l'état est valide, False sinon
+    """
+    if not isinstance(state, dict):
+        return False
+    
+    if "messages" not in state:
+        return False
+    
+    if not isinstance(state["messages"], list):
+        return False
+    
+    # Vérifier que tous les éléments sont des BaseMessage
+    for msg in state["messages"]:
+        if not isinstance(msg, BaseMessage):
+            return False
+    
+    return True
+
+
+def get_last_ai_message(state: AgentState) -> AIMessage | None:
+    """
+    Récupère le dernier message AI de l'état.
+    
+    Args:
+        state: État de l'agent
+        
+    Returns:
+        Le dernier AIMessage ou None si aucun trouvé
+    """
+    for message in reversed(state["messages"]):
+        if isinstance(message, AIMessage):
+            return message
+    return None
+</file>
+
+<file path="src/regulai/tools.py">
+"""
+Outils pour interagir avec le serveur MCP Légifrance via HTTP.
+
+Ce module contient la classe MCPClient pour la communication HTTP et les outils 
+LangChain décorés avec @tool pour l'intégration avec l'agent LangGraph.
+"""
+
+import httpx
+from typing import List, Dict, Any, Optional
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
+from .config import get_config
+
+
+# =============================================================================
+# SCHÉMAS PYDANTIC POUR VALIDATION DES ARGUMENTS
+# =============================================================================
+
+class SearchParams(BaseModel):
+    """Paramètres pour la recherche dans Légifrance."""
+    query: str = Field(
+        description="Requête de recherche en français (ex: 'congés payés', 'droit du travail')"
+    )
+    max_results: int = Field(
+        default=10,
+        description="Nombre maximum de résultats à retourner"
+    )
+
+
+class ArticleParams(BaseModel):
+    """Paramètres pour récupérer un article spécifique."""
+    article_id: str = Field(
+        description="Identifiant de l'article (ex: 'LEGIARTI000006900846' ou 'L3141-1')"
+    )
+
+
+class BrowseCodeParams(BaseModel):
+    """Paramètres pour naviguer dans un code juridique."""
+    code_name: str = Field(
+        description="Nom du code juridique (ex: 'Code du travail', 'Code civil')"
+    )
+    section: Optional[str] = Field(
+        default=None,
+        description="Section spécifique à explorer (optionnel)"
+    )
+
+
+# =============================================================================
+# CLIENT MCP POUR COMMUNICATION HTTP
+# =============================================================================
+
+class MCPClient:
+    """
+    Client HTTP pour communiquer avec le serveur MCP Légifrance.
+    
+    Cette classe encapsule toute la logique de communication HTTP avec le serveur MCP,
+    permettant d'abstraire les détails du protocole MCP pour les outils.
+    """
+    
+    def __init__(self, server_url: Optional[str] = None, timeout: Optional[int] = None):
+        """
+        Initialise le client MCP.
+        
+        Args:
+            server_url: URL du serveur MCP (utilise la config par défaut si None)
+            timeout: Timeout en secondes (utilise la config par défaut si None)
+        """
+        config = get_config()
+        self.server_url = server_url or config.mcp_server_url
+        self.timeout = timeout or config.mcp_timeout
+    
+    def call_tool(self, tool_name: str, tool_args: Dict[str, Any]) -> str:
+        """
+        Appelle un outil sur le serveur MCP via HTTP.
+        
+        Args:
+            tool_name: Nom de l'outil MCP à appeler
+            tool_args: Arguments à passer à l'outil
+        
+        Returns:
+            Réponse de l'outil sous forme de chaîne formatée
+            
+        Raises:
+            Exception: En cas d'erreur de communication ou de serveur
+        """
+        try:
+            # Préparer la requête selon le format attendu par le serveur MCP
+            payload = {
+                "method": "tools/call",
+                "params": {
+                    "name": tool_name,
+                    "arguments": tool_args
+                }
+            }
+            
+            # Faire la requête HTTP au serveur MCP
+            with httpx.Client(timeout=self.timeout) as client:
+                response = client.post(
+                    f"{self.server_url}/invoke",  # Point d'entrée principal du serveur
+                    json=payload,
+                    headers={"Content-Type": "application/json"}
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    return self._parse_mcp_response(result)
+                else:
+                    return self._handle_error_response(response)
+                    
+        except httpx.RequestError as e:
+            return f"Erreur de connexion au serveur MCP ({self.server_url}): {e}"
+        except Exception as e:
+            return f"Erreur lors de l'appel de l'outil {tool_name}: {e}"
+    
+    def _parse_mcp_response(self, result: Dict[str, Any]) -> str:
+        """
+        Parse la réponse du serveur MCP selon son format.
+        
+        Args:
+            result: Réponse JSON du serveur MCP
+            
+        Returns:
+            Contenu formaté de la réponse
+        """
+        # Parser la réponse MCP selon son format
+        if "result" in result:
+            content = result["result"]
+            
+            # Si la réponse contient du contenu structuré
+            if isinstance(content, dict) and "content" in content:
+                content_data = content["content"]
+                
+                # Gérer les réponses avec liste de contenus
+                if isinstance(content_data, list) and len(content_data) > 0:
+                    first_item = content_data[0]
+                    if isinstance(first_item, dict) and "text" in first_item:
+                        return first_item["text"]
+                    else:
+                        return str(first_item)
+                else:
+                    return str(content_data)
+            else:
+                return str(content)
+        else:
+            return f"Réponse inattendue du serveur MCP: {result}"
+    
+    def _handle_error_response(self, response: httpx.Response) -> str:
+        """
+        Gère les réponses d'erreur HTTP.
+        
+        Args:
+            response: Réponse HTTP d'erreur
+            
+        Returns:
+            Message d'erreur formaté
+        """
+        error_msg = f"Erreur HTTP {response.status_code}"
+        try:
+            error_detail = response.json()
+            error_msg += f": {error_detail}"
+        except:
+            error_msg += f": {response.text}"
+        return error_msg
+    
+    def test_connection(self) -> bool:
+        """
+        Teste la connexion au serveur MCP.
+        
+        Returns:
+            True si la connexion fonctionne, False sinon
+        """
+        try:
+            with httpx.Client(timeout=self.timeout) as client:
+                response = client.get(f"{self.server_url}/health")
+                return response.status_code == 200
+        except:
+            return False
+    
+    def get_server_info(self) -> Optional[Dict[str, Any]]:
+        """
+        Récupère les informations du serveur MCP.
+        
+        Returns:
+            Informations du serveur ou None en cas d'erreur
+        """
+        try:
+            with httpx.Client(timeout=self.timeout) as client:
+                response = client.get(f"{self.server_url}/info")
+                if response.status_code == 200:
+                    return response.json()
+        except:
+            pass
+        return None
+
+
+# Instance globale du client MCP
+_mcp_client: Optional[MCPClient] = None
+
+
+def get_mcp_client() -> MCPClient:
+    """
+    Récupère l'instance globale du client MCP.
+    
+    Returns:
+        Instance du client MCP
+    """
+    global _mcp_client
+    if _mcp_client is None:
+        _mcp_client = MCPClient()
+    return _mcp_client
+
+
+# =============================================================================
+# OUTILS LÉGIFRANCE AVEC DÉCORATEUR @tool
+# =============================================================================
+
+@tool("search_legifrance", args_schema=SearchParams, parse_docstring=True)
+def search_legifrance(query: str, max_results: int = 10) -> str:
+    """
+    Recherche des textes juridiques dans la base de données Légifrance.
+    
+    Cet outil permet de chercher des lois, décrets, codes, jurisprudence et autres 
+    textes juridiques français. Utilisez des termes de recherche en français.
+    
+    Args:
+        query: Requête de recherche en français (ex: "congés payés", "licenciement économique")
+        max_results: Nombre maximum de résultats à retourner (défaut: 10)
+        
+    Returns:
+        Liste formatée des textes juridiques trouvés avec leurs références
+    """
+    client = get_mcp_client()
+    return client.call_tool("search_legifrance", {
+        "query": query,
+        "max_results": max_results
+    })
+
+
+@tool("get_article", args_schema=ArticleParams, parse_docstring=True)  
+def get_article(article_id: str) -> str:
+    """
+    Récupère le contenu complet d'un article juridique spécifique.
+    
+    Permet d'obtenir le texte intégral d'un article de loi, de code ou de décret
+    à partir de son identifiant Légifrance ou de sa référence standard.
+    
+    Args:
+        article_id: Identifiant de l'article (ex: "LEGIARTI000006900846", "L3141-1", "R1234-5")
+        
+    Returns:
+        Texte complet de l'article avec ses métadonnées (version, dates, etc.)
+    """
+    client = get_mcp_client()
+    return client.call_tool("get_article", {
+        "article_id": article_id
+    })
+
+
+@tool("browse_code", args_schema=BrowseCodeParams, parse_docstring=True)
+def browse_code(code_name: str, section: Optional[str] = None) -> str:
+    """
+    Navigate dans la structure hiérarchique d'un code juridique français.
+    
+    Permet d'explorer l'organisation d'un code (livres, titres, chapitres, sections)
+    et d'obtenir la liste des articles dans une section donnée.
+    
+    Args:
+        code_name: Nom du code juridique (ex: "Code du travail", "Code civil", "Code pénal")
+        section: Section spécifique à explorer (ex: "L3141", "Livre III", optionnel)
+        
+    Returns:
+        Structure hiérarchique du code ou contenu de la section demandée
+    """
+    client = get_mcp_client()
+    return client.call_tool("browse_code", {
+        "code_name": code_name,
+        "section": section
+    })
+
+
+# =============================================================================
+# FONCTIONS UTILITAIRES
+# =============================================================================
+
+def get_available_tools() -> List:
+    """
+    Retourne la liste des outils disponibles pour l'agent.
+    
+    Returns:
+        Liste des fonctions-outils décorées avec @tool
+    """
+    return [search_legifrance, get_article, browse_code]
+
+
+def test_mcp_connection() -> bool:
+    """
+    Teste la connexion au serveur MCP.
+    
+    Returns:
+        True si la connexion fonctionne, False sinon
+    """
+    client = get_mcp_client()
+    return client.test_connection()
+
+
+def get_mcp_server_info() -> Optional[Dict[str, Any]]:
+    """
+    Récupère les informations du serveur MCP.
+    
+    Returns:
+        Informations du serveur ou None en cas d'erreur
+    """
+    client = get_mcp_client()
+    return client.get_server_info()
+</file>
+
+<file path="tests/__init__.py">
+# Tests pour le package RegulAI
+</file>
+
+<file path="tests/conftest.py">
+"""
+Configuration pytest pour les tests RegulAI.
+
+Ce fichier contient les fixtures communes et la configuration de test.
+"""
+
+import pytest
+import os
+import sys
+from unittest.mock import Mock
+
+# Ajouter le répertoire src au PYTHONPATH
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from regulai.config import RegulAIConfig
+
+
+@pytest.fixture
+def mock_config():
+    """Fixture qui fournit une configuration mockée pour les tests."""
+    config = RegulAIConfig(
+        openai_api_key="test_key_123",
+        mcp_server_url="http://localhost:8000",
+        mcp_timeout=30,
+        model_name="gpt-4o-mini",
+        model_temperature=0.0,
+        max_iterations=20,
+        default_max_results=10,
+        log_level="INFO"
+    )
+    return config
+
+
+@pytest.fixture
+def mock_mcp_client():
+    """Fixture qui fournit un client MCP mocké."""
+    client = Mock()
+    client.call_tool.return_value = "Réponse de test du serveur MCP"
+    client.test_connection.return_value = True
+    client.get_server_info.return_value = {"version": "1.0.0", "status": "running"}
+    return client
+
+
+@pytest.fixture
+def mock_openai_response():
+    """Fixture qui fournit une réponse OpenAI mockée."""
+    response = Mock()
+    response.content = "Réponse de test de l'agent"
+    response.tool_calls = []
+    return response
+</file>
+
+<file path="tests/test_tools.py">
+"""
+Tests pour les outils RegulAI.
+
+Ce module teste les fonctionnalités des outils MCP et leur intégration LangChain.
+"""
+
+import pytest
+from unittest.mock import patch, Mock
+import os
+import sys
+
+# Ajouter le répertoire src au PYTHONPATH
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from regulai.tools import get_available_tools, MCPClient, search_legifrance
+
+
+def test_get_available_tools():
+    """Test que les outils sont correctement chargés."""
+    tools = get_available_tools()
+    
+    assert len(tools) == 3
+    tool_names = [tool.name for tool in tools]
+    assert "search_legifrance" in tool_names
+    assert "get_article" in tool_names
+    assert "browse_code" in tool_names
+
+
+def test_mcp_client_initialization():
+    """Test l'initialisation du client MCP."""
+    client = MCPClient("http://test:8000", 60)
+    
+    assert client.server_url == "http://test:8000"
+    assert client.timeout == 60
+
+
+def test_search_legifrance_tool_structure():
+    """Test la structure de l'outil search_legifrance."""
+    tools = get_available_tools()
+    search_tool = next(tool for tool in tools if tool.name == "search_legifrance")
+    
+    assert search_tool.name == "search_legifrance"
+    assert search_tool.description is not None
+    assert "Recherche des textes juridiques" in search_tool.description
+    
+    # Vérifier le schéma d'arguments
+    schema = search_tool.args_schema.model_json_schema()
+    properties = schema.get("properties", {})
+    assert "query" in properties
+    assert "max_results" in properties
+
+
+@patch('regulai.tools.get_mcp_client')
+def test_search_legifrance_tool_call(mock_get_client):
+    """Test l'appel de l'outil search_legifrance."""
+    # Mock du client MCP
+    mock_client = Mock()
+    mock_client.call_tool.return_value = "Résultats de recherche mockés"
+    mock_get_client.return_value = mock_client
+    
+    # Appeler l'outil directement avec invoke
+    result = search_legifrance.invoke({"query": "test query", "max_results": 5})
+    
+    # Vérifications
+    assert result == "Résultats de recherche mockés"
+    mock_client.call_tool.assert_called_once_with(
+        "search_legifrance", 
+        {"query": "test query", "max_results": 5}
+    )
+
+
+def test_mcp_client_parse_response():
+    """Test le parsing des réponses MCP."""
+    client = MCPClient()
+    
+    # Test réponse normale
+    response = {
+        "result": {
+            "content": [
+                {"text": "Contenu de test"}
+            ]
+        }
+    }
+    
+    result = client._parse_mcp_response(response)
+    assert result == "Contenu de test"
+    
+    # Test réponse simple
+    response_simple = {
+        "result": "Réponse simple"
+    }
+    
+    result_simple = client._parse_mcp_response(response_simple)
+    assert result_simple == "Réponse simple"
+
+
+@patch('httpx.Client')
+def test_mcp_client_connection_test(mock_httpx_client):
+    """Test la vérification de connexion MCP."""
+    # Mock de la réponse HTTP
+    mock_response = Mock()
+    mock_response.status_code = 200
+    
+    mock_session = Mock()
+    mock_session.get.return_value = mock_response
+    mock_session.__enter__.return_value = mock_session
+    mock_session.__exit__.return_value = None
+    
+    mock_httpx_client.return_value = mock_session
+    
+    # Test de connexion
+    client = MCPClient("http://test:8000")
+    result = client.test_connection()
+    
+    assert result is True
+    mock_session.get.assert_called_once_with("http://test:8000/health")
+</file>
+
+<file path="tools_validation_report.json">
+{
+  "timestamp": "True",
+  "mcp_server_available": false,
+  "tools_count": 3,
+  "tools": [
+    {
+      "name": "search_legifrance",
+      "description": "Paramètres pour la recherche dans Légifrance.",
+      "schema": {
+        "properties": {
+          "query": {
+            "description": "Requête de recherche en français (ex: 'congés payés', 'droit du travail')",
+            "title": "Query",
+            "type": "string"
+          },
+          "max_results": {
+            "default": 10,
+            "description": "Nombre maximum de résultats à retourner",
+            "title": "Max Results",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "get_article",
+      "description": "Paramètres pour récupérer un article spécifique.",
+      "schema": {
+        "properties": {
+          "article_id": {
+            "description": "Identifiant de l'article (ex: 'LEGIARTI000006900846' ou 'L3141-1')",
+            "title": "Article Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "article_id"
+        ]
+      }
+    },
+    {
+      "name": "browse_code",
+      "description": "Paramètres pour naviguer dans un code juridique.",
+      "schema": {
+        "properties": {
+          "code_name": {
+            "description": "Nom du code juridique (ex: 'Code du travail', 'Code civil')",
+            "title": "Code Name",
+            "type": "string"
+          },
+          "section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Section spécifique à explorer (optionnel)",
+            "title": "Section"
+          }
+        },
+        "required": [
+          "code_name"
+        ]
+      }
+    }
+  ]
+}
+</file>
+
+</files>
+
+quand je fais les test ça me fait ça :
+ssef@DESKTOP-3H2V8PT MINGW64 /c/Users/assef/Documents/RegulAI
+$ python -m pytest tests/ -v
+=========================================== test session starts ===========================================
+platform win32 -- Python 3.12.6, pytest-8.4.0, pluggy-1.6.0 -- C:\Users\assef\Documents\RegulAI\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\assef\Documents\RegulAI
+configfile: pyproject.toml
+plugins: anyio-4.9.0, langsmith-0.3.45, asyncio-1.0.0, mock-3.14.1
+asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 6 items                                                                                          
+
+tests/test_tools.py::test_get_available_tools PASSED                                                 [ 16%]
+tests/test_tools.py::test_mcp_client_initialization PASSED                                           [ 33%]
+tests/test_tools.py::test_search_legifrance_tool_structure FAILED                                    [ 50%]
+tests/test_tools.py::test_search_legifrance_tool_call PASSED                                         [ 66%]
+tests/test_tools.py::test_mcp_client_parse_response PASSED                                           [ 83%]
+tests/test_tools.py::test_mcp_client_connection_test FAILED                                          [100%]
+
+================================================ FAILURES ================================================= 
+__________________________________ test_search_legifrance_tool_structure __________________________________ 
+
+    def test_search_legifrance_tool_structure():
+        """Test la structure de l'outil search_legifrance."""
+        tools = get_available_tools()
+        search_tool = next(tool for tool in tools if tool.name == "search_legifrance")
+
+        assert search_tool.name == "search_legifrance"
+        assert search_tool.description is not None
+>       assert "Recherche des textes juridiques" in search_tool.description
+E       AssertionError: assert 'Recherche des textes juridiques' in 'Paramètres pour la recherche dans Légifrance.'
+E        +  where 'Paramètres pour la recherche dans Légifrance.' = StructuredTool(name='search_legifrance', description='Paramètres pour la recherche dans Légifrance.', args_schema=<class 'regulai.tools.SearchParams'>, func=<function search_legifrance at 0x000001E405F94220>).description
+
+tests\test_tools.py:44: AssertionError
+_____________________________________ test_mcp_client_connection_test _____________________________________ 
+
+mock_httpx_client = <MagicMock name='Client' id='2078864324560'>
+
+    @patch('httpx.Client')
+    def test_mcp_client_connection_test(mock_httpx_client):
+        """Test la vérification de connexion MCP."""
+        # Mock de la réponse HTTP
+        mock_response = Mock()
+        mock_response.status_code = 200
+
+        mock_session = Mock()
+        mock_session.get.return_value = mock_response
+>       mock_session.__enter__.return_value = mock_session
+        ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_tools.py:106:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <Mock id='2078865285312'>, name = '__enter__'
+
+    def __getattr__(self, name):
+        if name in {'_mock_methods', '_mock_unsafe'}:
+            raise AttributeError(name)
+        elif self._mock_methods is not None:
+            if name not in self._mock_methods or name in _all_magics:
+                raise AttributeError("Mock object has no attribute %r" % name)
+        elif _is_magic(name):
+>           raise AttributeError(name)
+E           AttributeError: __enter__
+
+C:\Program Files\Python312\Lib\unittest\mock.py:660: AttributeError
+========================================= short test summary info =========================================
+FAILED tests/test_tools.py::test_search_legifrance_tool_structure - AssertionError: assert 'Recherche des textes juridiques' in 'Paramètres pour la recherche dans Légifran...
+FAILED tests/test_tools.py::test_mcp_client_connection_test - AttributeError: __enter__
+======================================= 2 failed, 4 passed in 0.20s =======================================
+(.venv)
+assef@DESKTOP-3H2V8PT MINGW64 /c/Users/assef/Documents/RegulAI
+$
+
+
+
+Qu'est ce qu'il me reste à faire ? 
+Tu es un expert senior dev en Langgraph, Agent IA. A l'aide la documentation de Langgraph et de FastMCP, fais des prompts à Cursor qui a en contexte mon projet et demande lui de chercher les docs nécessaires avec Context7. Tu peux découper en plusieurs prompt si besoin. Ne fournis pas d'extraits de code.

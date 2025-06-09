@@ -18,7 +18,7 @@ from .config import get_config
 # =============================================================================
 
 class SearchParams(BaseModel):
-    """Paramètres pour la recherche dans Légifrance."""
+    """Recherche des textes juridiques dans la base de données Légifrance."""
     query: str = Field(
         description="Requête de recherche en français (ex: 'congés payés', 'droit du travail')"
     )
