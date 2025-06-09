@@ -1,3 +1,0 @@
-[console_scripts]
-regulai = regulai.agent:main
-regulai-validate = scripts.validate_tools:main
