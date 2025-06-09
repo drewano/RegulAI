@@ -2,3 +2,5 @@
 .venv
 repomix.config.json
 repomix-output.xml
+.repomixignore
+.pytest_cache
