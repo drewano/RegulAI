@@ -136,13 +136,54 @@ def stream_agent_conversation(
     # Configuration pour la persistance
     config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
     
-    # Streamer les étapes
+    # Streamer les étapes avec mode "updates" pour capturer les appels d'outils
+    # et les transitions entre nœuds
     for step in agent.stream(
         {"messages": [user_message]},
         config=config,
-        stream_mode="values"
+        stream_mode="updates"
     ):
         yield step
+
+
+def stream_agent_conversation_with_tokens(
+    message: str,
+    thread_id: str = "default-session", 
+    agent: Optional[CompiledGraph] = None
+):
+    """
+    Lance une conversation avec streaming token par token avec l'agent RegulAI.
+    
+    Cette fonction utilise le mode "messages" pour obtenir les tokens individuels
+    du modèle de langage, permettant un affichage progressif plus granulaire.
+    
+    Args:
+        message: Message de l'utilisateur
+        thread_id: ID de session pour la persistance
+        agent: Instance de l'agent (créée automatiquement si None)
+        
+    Yields:
+        Tokens et métadonnées de streaming
+        
+    Raises:
+        ValueError: Si la configuration est invalide
+    """
+    if agent is None:
+        agent = create_agent()
+    
+    # Créer le message utilisateur
+    user_message = HumanMessage(content=message)
+    
+    # Configuration pour la persistance
+    config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+    
+    # Streamer avec mode "messages" pour obtenir les tokens individuels
+    for token, metadata in agent.stream(
+        {"messages": [user_message]},
+        config=config,
+        stream_mode="messages"
+    ):
+        yield token, metadata
 
 
 def main():
@@ -157,9 +198,9 @@ def main():
         
         # Vérifier la configuration
         config = get_config()
-        if not config.openai_api_key:
-            print("❌ Erreur: OPENAI_API_KEY non configuré")
-            print("Copiez .env.example vers .env et remplissez votre clé API OpenAI")
+        if not config.google_api_key:
+            print("❌ Erreur: GOOGLE_API_KEY non configuré")
+            print("Copiez .env.example vers .env et remplissez votre clé API Google")
             return
         
         print(f"✅ Configuration validée")
@@ -193,7 +234,7 @@ def main():
     except Exception as e:
         print(f"\n❌ Erreur lors du test: {e}")
         print("\nVérifiez votre configuration :")
-        print("1. OPENAI_API_KEY est défini dans .env")
+        print("1. GOOGLE_API_KEY est défini dans .env")
         print("2. Le serveur MCP est démarré (optionnel pour ce test)")
 
 

@@ -7,7 +7,7 @@ des nœuds qui composent le workflow ReAct.
 
 from typing import TypedDict, Literal, List, Dict, Any
 from langchain_core.messages import BaseMessage, ToolMessage, AIMessage
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from .config import get_config
 from .tools import get_available_tools
@@ -31,33 +31,34 @@ class AgentState(TypedDict):
 # CONFIGURATION ET OUTILS
 # =============================================================================
 
-def get_configured_model() -> ChatOpenAI:
+def get_configured_model() -> ChatGoogleGenerativeAI:
     """
-    Crée une instance configurée du modèle OpenAI.
+    Crée une instance configurée du modèle Google Gemini.
     
     Returns:
-        Instance configurée de ChatOpenAI
+        Instance configurée de ChatGoogleGenerativeAI
         
     Raises:
-        ValueError: Si la clé API OpenAI n'est pas configurée
+        ValueError: Si la clé API Google n'est pas configurée
     """
     config = get_config()
     
     # Valider la clé API
-    if not config.openai_api_key:
+    if not config.google_api_key:
         raise ValueError(
-            "OPENAI_API_KEY est requis. "
+            "GOOGLE_API_KEY est requis. "
             "Définissez la variable d'environnement ou copiez .env.example vers .env"
         )
     
     # Définir la variable d'environnement si elle n'est pas déjà définie
     import os
-    if not os.environ.get("OPENAI_API_KEY"):
-        os.environ["OPENAI_API_KEY"] = config.openai_api_key
+    if not os.environ.get("GOOGLE_API_KEY"):
+        os.environ["GOOGLE_API_KEY"] = config.google_api_key
     
-    return ChatOpenAI(
+    return ChatGoogleGenerativeAI(
         model=config.model_name,
-        temperature=config.model_temperature
+        temperature=config.model_temperature,
+        google_api_key=config.google_api_key
     )
 
 

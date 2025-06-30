@@ -14,10 +14,30 @@ class RegulAIConfig(BaseSettings):
     """Configuration centralisée avec validation Pydantic."""
     
     # ==========================================
+    # Configuration OAuth/API Légifrance
+    # ==========================================
+    oauth_client_id: Optional[str] = Field(
+        default=None,
+        description="Identifiant client OAuth pour l'API Légifrance/PISTE"
+    )
+    oauth_client_secret: Optional[str] = Field(
+        default=None,
+        description="Secret client OAuth pour l'API Légifrance/PISTE"
+    )
+    oauth_token_url: str = Field(
+        default="https://oauth.piste.gouv.fr/api/oauth/token",
+        description="URL du serveur OAuth pour obtenir les tokens"
+    )
+    api_base_url: str = Field(
+        default="https://api.piste.gouv.fr",
+        description="URL de base de l'API Légifrance/PISTE"
+    )
+    
+    # ==========================================
     # Configuration Serveur MCP  
     # ==========================================
     mcp_server_url: str = Field(
-        default="http://localhost:8000",
+        default="http://127.0.0.1:8000/mcp/",
         description="URL du serveur MCP Légifrance"
     )
     mcp_timeout: int = Field(
@@ -28,13 +48,13 @@ class RegulAIConfig(BaseSettings):
     # ==========================================
     # Configuration LLM
     # ==========================================
-    openai_api_key: Optional[str] = Field(
+    google_api_key: Optional[str] = Field(
         default=None,
-        description="Clé API OpenAI pour le modèle de langage"
+        description="Clé API Google pour le modèle de langage Gemini"
     )
     model_name: str = Field(
-        default="gpt-4o-mini",
-        description="Nom du modèle OpenAI à utiliser"
+        default="gemini-2.0-flash",
+        description="Nom du modèle Google Gemini à utiliser"
     )
     model_temperature: float = Field(
         default=0.0,
@@ -87,14 +107,46 @@ class RegulAIConfig(BaseSettings):
         "env_prefix": "",
     }
     
-    def validate_openai_key(self) -> str:
-        """Valide que la clé OpenAI est présente."""
-        if not self.openai_api_key:
+    def validate_google_key(self) -> str:
+        """Valide que la clé Google API est présente."""
+        if not self.google_api_key:
             raise ValueError(
-                "OPENAI_API_KEY est requis. "
+                "GOOGLE_API_KEY est requis. "
                 "Définissez la variable d'environnement ou copiez .env.example vers .env"
             )
-        return self.openai_api_key
+        return self.google_api_key
+    
+    def validate_oauth_config(self) -> bool:
+        """
+        Valide que la configuration OAuth est complète pour l'API Légifrance.
+        
+        Returns:
+            True si la configuration OAuth est complète, False sinon
+        """
+        return bool(
+            self.oauth_client_id and 
+            self.oauth_client_secret and 
+            self.oauth_token_url and 
+            self.api_base_url
+        )
+    
+    def get_oauth_missing_fields(self) -> list[str]:
+        """
+        Retourne la liste des champs OAuth manquants.
+        
+        Returns:
+            Liste des noms de champs OAuth non configurés
+        """
+        missing = []
+        if not self.oauth_client_id:
+            missing.append("OAUTH_CLIENT_ID")
+        if not self.oauth_client_secret:
+            missing.append("OAUTH_CLIENT_SECRET")
+        if not self.oauth_token_url:
+            missing.append("OAUTH_TOKEN_URL")
+        if not self.api_base_url:
+            missing.append("API_BASE_URL")
+        return missing
 
 
 # Fonction pour créer une instance de configuration avec validation
@@ -109,7 +161,7 @@ def create_config() -> RegulAIConfig:
         ValueError: Si une configuration requise est manquante
     """
     config = RegulAIConfig()
-    # La validation de la clé OpenAI sera faite lors de la création de l'agent
+    # La validation de la clé Google API sera faite lors de la création de l'agent
     return config
 
 

@@ -19,10 +19,10 @@ from regulai.config import RegulAIConfig
 def mock_config():
     """Fixture qui fournit une configuration mockée pour les tests."""
     config = RegulAIConfig(
-        openai_api_key="test_key_123",
+        google_api_key="test_key_123",
         mcp_server_url="http://localhost:8000",
         mcp_timeout=30,
-        model_name="gpt-4o-mini",
+        model_name="gemini-2.0-flash",
         model_temperature=0.0,
         max_iterations=20,
         default_max_results=10,
@@ -42,8 +42,8 @@ def mock_mcp_client():
 
 
 @pytest.fixture
-def mock_openai_response():
-    """Fixture qui fournit une réponse OpenAI mockée."""
+def mock_google_response():
+    """Fixture qui fournit une réponse Google Gemini mockée."""
     response = Mock()
     response.content = "Réponse de test de l'agent"
     response.tool_calls = []

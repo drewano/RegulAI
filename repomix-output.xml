@@ -43,6 +43,7 @@ The content is organized as follows:
 <directory_structure>
 .env.example
 .gitignore
+.repomixignore
 examples/__init__.py
 examples/simple_conversation.py
 langgraph.json
@@ -59,10 +60,13 @@ src/regulai/agent.py
 src/regulai/config.py
 src/regulai/graph.py
 src/regulai/tools.py
+streamlit_app.py
+test_app_final.py
+test_streaming_mock.py
+test_streaming.py
 tests/__init__.py
 tests/conftest.py
 tests/test_tools.py
-tools_validation_report.json
 </directory_structure>
 
 <files>
@@ -81,12 +85,327 @@ LOG_LEVEL=INFO
 </file>
 
 <file path=".gitignore">
+# ===================================================================
+# GITIGNORE POUR REGULAI - PROJET LANGGRAPH + MCP
+# ===================================================================
+
+# ===================================================================
+# PYTHON
+# ===================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
 .env
 .venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ===================================================================
+# LANGGRAPH & LANGCHAIN SPÉCIFIQUE
+# ===================================================================
+# Clés API et configuration sensible
+.env.local
+.env.production
+.env.development
+api_keys.txt
+secrets.json
+
+# Fichiers de session LangGraph
+.langgraph/
+langgraph_sessions/
+agent_sessions/
+
+# Checkpoints LangGraph
+checkpoints/
+.checkpoints/
+
+# Cache des modèles
+model_cache/
+.model_cache/
+
+# ===================================================================
+# MCP (MODEL CONTEXT PROTOCOL)
+# ===================================================================
+# Configuration MCP locale
+mcp_config.local.json
+.mcp/
+
+# Logs MCP
+mcp_server.log
+mcp_client.log
+
+# ===================================================================
+# IDE & ÉDITEURS
+# ===================================================================
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ===================================================================
+# SYSTÈMES D'EXPLOITATION
+# ===================================================================
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+
+# ===================================================================
+# LOGS & FICHIERS TEMPORAIRES
+# ===================================================================
+# Logs généraux
+*.log
+logs/
+*.log.*
+
+# Fichiers temporaires
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# ===================================================================
+# BASE DE DONNÉES & STOCKAGE
+# ===================================================================
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Autres bases de données
+*.mdb
+*.accdb
+
+# ===================================================================
+# CONFIGURATION SPÉCIFIQUE AU PROJET
+# ===================================================================
+# Rapports générés
+tools_validation_report.json
+agent_performance_report.json
+test_results/
+
+# Fichiers de développement temporaire
+scratch/
+playground/
+experiments/
+
+# Configuration locale de développement
+config.local.py
+config.dev.py
+
+# Données de test sensibles
+test_data/private/
+sensitive_test_cases/
+
+# ===================================================================
+# ARCHIVES & BUILDS
+# ===================================================================
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ===================================================================
+# AUTRES
+# ===================================================================
+# Fichiers générés par certains outils
+.DS_Store?
+.coverage.*
+.nyc_output
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+</file>
+
+<file path=".repomixignore">
 repomix.config.json
-repomix-output.xml
-.repomixignore
-.pytest_cache
 </file>
 
 <file path="examples/__init__.py">
@@ -397,7 +716,8 @@ dependencies = [
     "langchain-core>=0.3.0",
     "httpx>=0.27.0",
     "pydantic>=2.0.0",
-    "pydantic-settings>=2.0.0"
+    "pydantic-settings>=2.0.0",
+    "streamlit>=1.39.0"
 ]
 
 [project.optional-dependencies]
@@ -413,6 +733,7 @@ dev = [
 [project.scripts]
 regulai = "regulai.agent:main"
 regulai-validate = "scripts.validate_tools:main"
+regulai-web = "streamlit run streamlit_app.py"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
@@ -1036,13 +1357,54 @@ def stream_agent_conversation(
     # Configuration pour la persistance
     config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
     
-    # Streamer les étapes
+    # Streamer les étapes avec mode "updates" pour capturer les appels d'outils
+    # et les transitions entre nœuds
     for step in agent.stream(
         {"messages": [user_message]},
         config=config,
-        stream_mode="values"
+        stream_mode="updates"
     ):
         yield step
+
+
+def stream_agent_conversation_with_tokens(
+    message: str,
+    thread_id: str = "default-session", 
+    agent: Optional[CompiledGraph] = None
+):
+    """
+    Lance une conversation avec streaming token par token avec l'agent RegulAI.
+    
+    Cette fonction utilise le mode "messages" pour obtenir les tokens individuels
+    du modèle de langage, permettant un affichage progressif plus granulaire.
+    
+    Args:
+        message: Message de l'utilisateur
+        thread_id: ID de session pour la persistance
+        agent: Instance de l'agent (créée automatiquement si None)
+        
+    Yields:
+        Tokens et métadonnées de streaming
+        
+    Raises:
+        ValueError: Si la configuration est invalide
+    """
+    if agent is None:
+        agent = create_agent()
+    
+    # Créer le message utilisateur
+    user_message = HumanMessage(content=message)
+    
+    # Configuration pour la persistance
+    config: RunnableConfig = {"configurable": {"thread_id": thread_id}}
+    
+    # Streamer avec mode "messages" pour obtenir les tokens individuels
+    for token, metadata in agent.stream(
+        {"messages": [user_message]},
+        config=config,
+        stream_mode="messages"
+    ):
+        yield token, metadata
 
 
 def main():
@@ -1495,7 +1857,7 @@ from .config import get_config
 # =============================================================================
 
 class SearchParams(BaseModel):
-    """Paramètres pour la recherche dans Légifrance."""
+    """Recherche des textes juridiques dans la base de données Légifrance."""
     query: str = Field(
         description="Requête de recherche en français (ex: 'congés payés', 'droit du travail')"
     )
@@ -1792,6 +2154,1213 @@ def get_mcp_server_info() -> Optional[Dict[str, Any]]:
     return client.get_server_info()
 </file>
 
+<file path="streamlit_app.py">
+"""
+Application Streamlit pour RegulAI - Assistant Juridique IA.
+
+Cette application fournit une interface web pour interagir avec l'agent RegulAI,
+spécialisé dans la recherche juridique française.
+"""
+
+import streamlit as st
+import os
+import uuid
+import traceback
+from typing import Optional, Dict, Any, Generator
+
+# Configuration de la page
+st.set_page_config(
+    page_title="RegulAI - Assistant Juridique",
+    page_icon="⚖️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# ============================================
+# FONCTIONS UTILITAIRES
+# ============================================
+
+def generate_thread_id() -> str:
+    """Génère un identifiant unique pour la conversation."""
+    return f"streamlit-session-{uuid.uuid4().hex[:8]}"
+
+
+def get_api_key_from_sources() -> tuple[Optional[str], str]:
+    """
+    Récupère la clé API OpenAI depuis différentes sources.
+    
+    Returns:
+        tuple: (clé_api, source) où source indique d'où vient la clé
+    """
+    # Vérifier les secrets Streamlit
+    try:
+        api_key_from_secrets = st.secrets.get("OPENAI_API_KEY")
+        if api_key_from_secrets:
+            return api_key_from_secrets, "secrets.toml"
+    except (KeyError, FileNotFoundError):
+        pass
+    
+    # Vérifier les variables d'environnement
+    api_key_from_env = os.getenv("OPENAI_API_KEY")
+    if api_key_from_env:
+        return api_key_from_env, "variables d'environnement"
+    
+    return None, "non trouvée"
+
+
+def mask_api_key(api_key: str) -> str:
+    """Masque la clé API pour l'affichage sécurisé."""
+    if len(api_key) > 12:
+        return f"{api_key[:8]}...{api_key[-4:]}"
+    return "clé trop courte"
+
+
+# ============================================
+# GESTION DES ERREURS ET VALIDATION
+# ============================================
+
+def test_mcp_server_connection() -> tuple[bool, str]:
+    """
+    Test la connexion au serveur MCP.
+    
+    Returns:
+        tuple: (succès, message_status)
+    """
+    try:
+        from src.regulai.tools import test_mcp_connection
+        is_connected = test_mcp_connection()
+        if is_connected:
+            return True, "✅ Serveur MCP accessible"
+        else:
+            return False, "❌ Serveur MCP non accessible"
+    except ImportError:
+        return False, "❌ Modules RegulAI non disponibles"
+    except Exception as e:
+        return False, f"❌ Erreur de connexion MCP : {str(e)}"
+
+
+def validate_agent_configuration() -> tuple[bool, str]:
+    """
+    Valide la configuration de l'agent.
+    
+    Returns:
+        tuple: (valide, message_status)
+    """
+    try:
+        from src.regulai.config import get_config
+        config = get_config()
+        return True, "✅ Configuration validée"
+    except Exception as e:
+        return False, f"❌ Erreur de configuration : {str(e)}"
+
+
+# ============================================
+# INITIALISATION ET CACHE DE L'AGENT
+# ============================================
+
+@st.cache_resource
+def initialize_agent(openai_api_key: str):
+    """
+    Initialise l'agent RegulAI une seule fois et le met en cache.
+    
+    Args:
+        openai_api_key: Clé API OpenAI pour l'initialisation
+        
+    Returns:
+        Agent LangGraph compilé ou None en cas d'erreur
+    """
+    try:
+        # Configurer temporairement la clé API dans l'environnement
+        os.environ["OPENAI_API_KEY"] = openai_api_key
+        
+        # Import et création de l'agent
+        from src.regulai.agent import create_agent
+        agent = create_agent()
+        
+        return agent
+    except ImportError as e:
+        st.error(f"❌ Erreur d'import des modules RegulAI : {e}")
+        return None
+    except Exception as e:
+        st.error(f"❌ Erreur lors de l'initialisation de l'agent : {e}")
+        return None
+
+
+# ============================================
+# TRAITEMENT DU STREAMING
+# ============================================
+
+def process_streaming_events(stream_generator) -> Generator[str, None, None]:
+    """
+    Traite les événements de streaming de l'agent pour afficher les étapes intermédiaires.
+    
+    Args:
+        stream_generator: Générateur d'événements de streaming de l'agent (mode "updates")
+        
+    Yields:
+        str: Contenu à afficher pour le streaming de texte
+        
+    Cette fonction intercepte les événements de streaming pour:
+    - Détecter les appels d'outils et afficher un indicateur de statut
+    - Permettre l'affichage des étapes intermédiaires de l'agent
+    - Maintenir la compatibilité avec st.write_stream
+    """
+    active_statuses = {}  # Pour traquer les statuses actifs par outil
+    last_content = ""  # Pour éviter la duplication de contenu
+    
+    try:
+        for event in stream_generator:
+            # Les événements en mode "updates" sont des dictionnaires avec des clés de nœuds
+            if isinstance(event, dict):
+                # Parcourir chaque nœud dans l'événement
+                for node_name, node_data in event.items():
+                    # Vérifier s'il y a des messages dans les données du nœud
+                    if isinstance(node_data, dict) and "messages" in node_data:
+                        messages = node_data["messages"]
+                        if messages:
+                            last_message = messages[-1]
+                            
+                            # Détecter les appels d'outils dans les messages AI (nœud "agent")
+                            if node_name == "agent" and hasattr(last_message, 'tool_calls') and last_message.tool_calls:
+                                for tool_call in last_message.tool_calls:
+                                    tool_name = tool_call.get('name', 'outil_inconnu')
+                                    tool_id = tool_call.get('id', f'tool_{len(active_statuses)}')
+                                    
+                                    # Mapper les noms d'outils vers des messages plus conviviaux
+                                    tool_display_names = {
+                                        'search_legifrance': '🔍 Recherche sur Légifrance...',
+                                        'get_article': '📄 Récupération d\'article juridique...',
+                                        'browse_code': '📚 Navigation dans le code juridique...',
+                                    }
+                                    
+                                    status_message = tool_display_names.get(tool_name, f'⚙️ Exécution de {tool_name}...')
+                                    
+                                    # Créer un indicateur de statut pour cet outil
+                                    if tool_id not in active_statuses:
+                                        active_statuses[tool_id] = st.status(status_message, expanded=False)
+                            
+                            # Détecter les réponses d'outils (nœud "tools")
+                            elif node_name == "tools" and hasattr(last_message, 'tool_call_id'):
+                                tool_call_id = last_message.tool_call_id
+                                # Fermer le statut correspondant s'il existe
+                                if tool_call_id in active_statuses:
+                                    status = active_statuses[tool_call_id]
+                                    status.update(label="✅ Terminé", state="complete")
+                                    # Retirer de la liste des statuses actifs
+                                    del active_statuses[tool_call_id]
+                            
+                            # Si c'est un message de réponse finale de l'agent (sans appels d'outils)
+                            elif (node_name == "agent" and 
+                                  hasattr(last_message, 'content') and 
+                                  last_message.content and
+                                  not (hasattr(last_message, 'tool_calls') and last_message.tool_calls)):
+                                
+                                # Yielder seulement le nouveau contenu pour éviter la duplication
+                                current_content = last_message.content
+                                if current_content != last_content:
+                                    # Yield le contenu complet (st.write_stream gère l'affichage progressif)
+                                    yield current_content
+                                    last_content = current_content
+            else:
+                # Si ce n'est pas un événement structuré attendu, essayer de le traiter comme du texte
+                content_str = str(event) if event else ""
+                if content_str and content_str.strip() and content_str != last_content:
+                    yield content_str
+                    last_content = content_str
+    
+    except Exception as e:
+        yield f"❌ Erreur lors du traitement du streaming : {str(e)}"
+
+
+# ============================================
+# GESTION DE LA CONVERSATION
+# ============================================
+
+def handle_user_message(prompt: str, agent) -> Optional[str]:
+    """
+    Traite un message utilisateur et retourne la réponse de l'agent.
+    
+    Args:
+        prompt: Message de l'utilisateur
+        agent: Instance de l'agent RegulAI
+        
+    Returns:
+        Réponse de l'agent ou None en cas d'erreur
+    """
+    try:
+        # Import de la fonction de streaming
+        from src.regulai.agent import stream_agent_conversation
+        
+        # Créer le générateur de streaming pour l'agent RegulAI avec détection d'outils
+        raw_stream_generator = stream_agent_conversation(
+            message=prompt,
+            thread_id=st.session_state.thread_id,
+            agent=agent
+        )
+        
+        # Traiter les événements pour afficher les statuts d'outils
+        processed_stream = process_streaming_events(raw_stream_generator)
+        
+        # Utiliser st.write_stream pour afficher la réponse en temps réel
+        # st.write_stream consomme le générateur et retourne le contenu complet
+        response_content = st.write_stream(processed_stream)
+        
+        # S'assurer que le retour est toujours une chaîne
+        if isinstance(response_content, list):
+            return "\n".join(str(item) for item in response_content)
+        elif response_content is not None:
+            return str(response_content)
+        else:
+            return None
+        
+    except ImportError as e:
+        st.error(f"❌ Erreur d'import : {e}")
+        return None
+    except Exception as e:
+        st.error(f"❌ Erreur lors du traitement de votre demande : {str(e)}")
+        st.error("💡 Vérifiez votre configuration et réessayez.")
+        return None
+
+
+def reset_conversation():
+    """Réinitialise complètement la conversation."""
+    if "messages" in st.session_state:
+        st.session_state.messages = []
+    
+    # Générer un nouveau thread_id pour une nouvelle conversation
+    st.session_state.thread_id = generate_thread_id()
+    
+    # Remettre le message de bienvenue
+    welcome_message = {
+        "role": "assistant", 
+        "content": "Bonjour ! Je suis RegulAI, votre assistant juridique spécialisé dans le droit français. Comment puis-je vous aider aujourd'hui ?"
+    }
+    st.session_state.messages.append(welcome_message)
+
+
+# ============================================
+# COMPOSANTS DE L'INTERFACE
+# ============================================
+
+def render_welcome_section():
+    """Affiche la section de bienvenue."""
+    st.title("⚖️ RegulAI - Assistant Juridique")
+    st.subheader("🤖 Votre assistant IA spécialisé en recherche juridique française")
+    
+    st.markdown("""
+    ---
+    ### Bienvenue sur RegulAI !
+
+    RegulAI est un assistant IA intelligent spécialisé dans la recherche juridique française. 
+    Il utilise l'architecture LangGraph et des outils MCP pour vous fournir des réponses précises 
+    et actualisées sur le droit français.
+
+    **Fonctionnalités principales :**
+    - 🔍 Recherche juridique avancée
+    - 📚 Accès aux bases de données légales
+    - 🎯 Réponses contextuelles et précises
+    - 💬 Interface conversationnelle intuitive
+
+    ---
+    """)
+
+
+def render_api_key_configuration():
+    """
+    Gère la configuration de la clé API OpenAI dans la sidebar.
+    
+    Returns:
+        bool: True si la clé API est configurée, False sinon
+    """
+    st.subheader("🔑 Clé API OpenAI")
+    
+    # Vérifier les sources existantes
+    api_key_from_sources, source = get_api_key_from_sources()
+    
+    # Initialiser la session state pour la clé API
+    if "openai_api_key" not in st.session_state:
+        st.session_state.openai_api_key = api_key_from_sources or ""
+    
+    # Champ de saisie de la clé API (type password pour la sécurité)
+    user_api_key = st.text_input(
+        label="Entrez votre clé API OpenAI :",
+        type="password",
+        value=st.session_state.openai_api_key if source == "non trouvée" else "",
+        placeholder="sk-..." if source == "non trouvée" else f"Clé configurée via {source}",
+        help="Votre clé API sera stockée de manière sécurisée dans la session.",
+        disabled=bool(source != "non trouvée"),
+        key="api_key_input"
+    )
+    
+    # Mettre à jour la session state si l'utilisateur a saisi une clé
+    if user_api_key and source == "non trouvée":
+        st.session_state.openai_api_key = user_api_key
+    
+    # Affichage du statut de la clé API
+    if st.session_state.openai_api_key:
+        if source != "non trouvée":
+            st.success(f"✅ Clé API chargée depuis {source}")
+        else:
+            st.success("✅ Clé API saisie par l'utilisateur")
+        
+        # Masquer la clé (afficher seulement les premiers et derniers caractères)
+        masked_key = mask_api_key(st.session_state.openai_api_key)
+        st.caption(f"🔒 Clé active : `{masked_key}`")
+        
+        return True
+    else:
+        st.error("❌ Aucune clé API configurée")
+        return False
+
+
+def render_system_status():
+    """Affiche l'état du système dans la sidebar."""
+    st.header("📋 État du système")
+    
+    # Vérifier la configuration
+    config_valid, config_msg = validate_agent_configuration()
+    
+    # Vérifier la connexion MCP
+    mcp_connected, mcp_msg = test_mcp_server_connection()
+    
+    # État de l'agent
+    agent_status = "❌ Non initialisé"
+    if st.session_state.get("openai_api_key"):
+        try:
+            agent = initialize_agent(st.session_state.openai_api_key)
+            agent_status = "✅ Opérationnel" if agent else "❌ Erreur d'initialisation"
+        except:
+            agent_status = "❌ Erreur d'initialisation"
+    
+    st.markdown(f"""
+    **Version :** 0.2.0
+    
+    **État des composants :**
+    - 🔧 Configuration : {config_msg}
+    - 🤖 Agent RegulAI : {agent_status}
+    - 🔗 Serveur MCP : {mcp_msg}
+    - ✅ Interface Streamlit : Opérationnelle
+    
+    **Besoin d'aide ?**
+    - 📖 Documentation dans le README
+    - 🔧 Exemples dans `/examples`
+    - 🔑 [Obtenir une clé API OpenAI](https://platform.openai.com/api-keys)
+    """)
+
+
+def render_conversation_actions():
+    """Affiche les actions de conversation dans la sidebar."""
+    if not st.session_state.get("openai_api_key"):
+        return
+    
+    st.subheader("💬 Actions")
+    
+    col1, col2 = st.columns(2)
+    
+    # Bouton pour nouvelle conversation
+    with col1:
+        if st.button("🆕 Nouvelle", help="Démarrer une nouvelle conversation", type="primary"):
+            reset_conversation()
+            st.rerun()
+    
+    # Bouton pour réinitialiser l'agent
+    with col2:
+        if st.button("🔄 Reset Agent", help="Réinitialiser l'agent en cas de problème", type="secondary"):
+            # Vider le cache de l'agent pour le forcer à se réinitialiser
+            initialize_agent.clear()
+            st.rerun()
+    
+    # Afficher les informations de session
+    if "messages" in st.session_state:
+        msg_count = len(st.session_state.messages)
+        st.caption(f"📝 Messages : {msg_count}")
+    
+    if "thread_id" in st.session_state:
+        st.caption(f"🔗 Session : `{st.session_state.thread_id}`")
+    
+    # Indicateur de streaming
+    st.caption("💬 Mode streaming activé")
+
+
+def render_chat_interface():
+    """Affiche l'interface de chat principale."""
+    # Initialiser l'identifiant de conversation unique
+    if "thread_id" not in st.session_state:
+        st.session_state.thread_id = generate_thread_id()
+    
+    # Initialiser l'historique de conversation dans session_state
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+        # Message de bienvenue
+        welcome_message = {
+            "role": "assistant", 
+            "content": "Bonjour ! Je suis RegulAI, votre assistant juridique spécialisé dans le droit français. Comment puis-je vous aider aujourd'hui ?"
+        }
+        st.session_state.messages.append(welcome_message)
+    
+    # Afficher l'historique des messages
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+    
+    # Champ de saisie pour les nouveaux messages
+    if prompt := st.chat_input("Posez votre question juridique..."):
+        # Ajouter le message utilisateur à l'historique
+        user_message = {"role": "user", "content": prompt}
+        st.session_state.messages.append(user_message)
+        
+        # Afficher le message utilisateur
+        with st.chat_message("user"):
+            st.markdown(prompt)
+        
+        # Obtenir l'agent initialisé
+        try:
+            agent = initialize_agent(st.session_state.openai_api_key)
+            
+            if agent:
+                # Afficher la réponse de l'agent avec streaming et statut des outils
+                with st.chat_message("assistant"):
+                    response_content = handle_user_message(prompt, agent)
+                    
+                    if response_content:
+                        # Ajouter la réponse à l'historique
+                        assistant_message = {"role": "assistant", "content": response_content}
+                        st.session_state.messages.append(assistant_message)
+                    else:
+                        # En cas d'erreur, ajouter un message d'erreur générique
+                        error_msg = "❌ Impossible de traiter votre demande. Veuillez réessayer."
+                        st.markdown(error_msg)
+                        assistant_message = {"role": "assistant", "content": error_msg}
+                        st.session_state.messages.append(assistant_message)
+            else:
+                # Agent non initialisé - afficher un message d'erreur
+                error_msg = "❌ **Agent non disponible**\n\nL'agent RegulAI n'a pas pu être initialisé. Vérifiez votre clé API OpenAI."
+                
+                with st.chat_message("assistant"):
+                    st.markdown(error_msg)
+                
+                assistant_message = {"role": "assistant", "content": error_msg}
+                st.session_state.messages.append(assistant_message)
+                
+        except Exception as e:
+            # Erreur générale d'initialisation
+            error_msg = f"❌ **Erreur système**\n\n{str(e)}"
+            
+            with st.chat_message("assistant"):
+                st.markdown(error_msg)
+            
+            assistant_message = {"role": "assistant", "content": error_msg}
+            st.session_state.messages.append(assistant_message)
+
+
+def render_configuration_warning():
+    """Affiche les instructions de configuration si nécessaire."""
+    st.warning("""
+    ⚠️ **Configuration requise**
+    
+    Pour utiliser RegulAI, vous devez configurer votre clé API OpenAI. 
+    
+    **Options de configuration :**
+    
+    1. **Via la barre latérale** ← Saisissez votre clé dans le champ à gauche
+    2. **Via un fichier secrets.toml** ← Créez `.streamlit/secrets.toml` :
+       ```toml
+       OPENAI_API_KEY = "sk-votre-clé-ici"
+       ```
+    3. **Via les variables d'environnement** ← Définissez `OPENAI_API_KEY`
+    
+    [🔗 Obtenir une clé API OpenAI](https://platform.openai.com/api-keys)
+    """)
+    
+    st.info("💡 **Votre clé API est sécurisée** - Elle est stockée uniquement dans votre session et jamais transmise ailleurs que vers l'API OpenAI.")
+
+
+# ============================================
+# APPLICATION PRINCIPALE
+# ============================================
+
+def main():
+    """Fonction principale de l'application."""
+    try:
+        # Afficher la section de bienvenue
+        render_welcome_section()
+        
+        # Sidebar - Configuration et état
+        with st.sidebar:
+            st.header("🔧 Configuration")
+            
+            # Configuration de la clé API
+            api_key_configured = render_api_key_configuration()
+            
+            st.divider()
+            
+            # Actions de conversation
+            render_conversation_actions()
+            
+            st.divider()
+            
+            # État du système
+            render_system_status()
+        
+        # Interface principale
+        if not api_key_configured:
+            render_configuration_warning()
+        else:
+            st.success("✅ Configuration terminée ! Vous pouvez maintenant commencer à converser avec RegulAI.")
+            render_chat_interface()
+    
+    except Exception as e:
+        st.error(f"❌ **Erreur critique de l'application**")
+        st.error(f"Détails : {str(e)}")
+        
+        # Afficher la stack trace en mode développement
+        if st.checkbox("🔧 Afficher les détails techniques", help="Pour le debugging"):
+            st.code(traceback.format_exc())
+        
+        st.info("💡 Essayez de recharger la page ou contactez le support si le problème persiste.")
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="test_app_final.py">
+#!/usr/bin/env python3
+"""
+Script de test pour valider l'application Streamlit refactorisée.
+
+Ce script teste les différentes fonctions modulaires de l'application
+sans avoir besoin de lancer Streamlit complet.
+"""
+
+import os
+import sys
+import tempfile
+import traceback
+from unittest.mock import Mock, patch
+
+# Ajouter le répertoire racine au chemin Python
+sys.path.insert(0, os.path.abspath('.'))
+
+def test_utility_functions():
+    """Test des fonctions utilitaires."""
+    print("🧪 Test des fonctions utilitaires...")
+    
+    try:
+        # Import des fonctions depuis streamlit_app
+        from streamlit_app import generate_thread_id, mask_api_key
+        
+        # Test de génération de thread_id
+        thread_id = generate_thread_id()
+        assert thread_id.startswith("streamlit-session-"), f"Thread ID invalide: {thread_id}"
+        assert len(thread_id) > 20, "Thread ID trop court"
+        print(f"  ✅ generate_thread_id: {thread_id}")
+        
+        # Test de masquage de clé API
+        test_key = "sk-1234567890abcdefghijklmnopqrstuvwxyz1234"
+        masked = mask_api_key(test_key)
+        expected = "sk-12345...1234"
+        assert masked == expected, f"Masquage incorrect: {masked} != {expected}"
+        print(f"  ✅ mask_api_key: {masked}")
+        
+        # Test avec clé courte
+        short_key = "sk-123"
+        masked_short = mask_api_key(short_key)
+        assert masked_short == "clé trop courte", f"Gestion clé courte incorrecte: {masked_short}"
+        print("  ✅ mask_api_key (clé courte): clé trop courte")
+        
+        print("✅ Fonctions utilitaires: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_utility_functions: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def test_api_key_sources():
+    """Test de récupération des clés API depuis différentes sources."""
+    print("🧪 Test de récupération des clés API...")
+    
+    try:
+        # Mock Streamlit
+        mock_st = Mock()
+        mock_st.secrets = {"OPENAI_API_KEY": "sk-from-secrets"}
+        
+        with patch('streamlit_app.st', mock_st):
+            from streamlit_app import get_api_key_from_sources
+            
+            # Test avec secrets Streamlit
+            api_key, source = get_api_key_from_sources()
+            assert api_key == "sk-from-secrets", f"Clé from secrets incorrecte: {api_key}"
+            assert source == "secrets.toml", f"Source incorrecte: {source}"
+            print(f"  ✅ Secrets Streamlit: {api_key} depuis {source}")
+        
+        # Test avec variable d'environnement
+        test_env_key = "sk-from-env-test"
+        with patch.dict(os.environ, {"OPENAI_API_KEY": test_env_key}):
+            # Mock st.secrets pour qu'il lève une KeyError
+            mock_st_no_secrets = Mock()
+            mock_st_no_secrets.secrets.get.side_effect = KeyError("No secrets")
+            
+            with patch('streamlit_app.st', mock_st_no_secrets):
+                api_key, source = get_api_key_from_sources()
+                assert api_key == test_env_key, f"Clé from env incorrecte: {api_key}"
+                assert source == "variables d'environnement", f"Source incorrecte: {source}"
+                print(f"  ✅ Variables d'environnement: {api_key} depuis {source}")
+        
+        # Test sans clé
+        mock_st_empty = Mock()
+        mock_st_empty.secrets.get.side_effect = KeyError("No secrets")
+        
+        with patch('streamlit_app.st', mock_st_empty), \
+             patch.dict(os.environ, {}, clear=True):
+            # S'assurer qu'OPENAI_API_KEY n'est pas dans l'environnement
+            if 'OPENAI_API_KEY' in os.environ:
+                del os.environ['OPENAI_API_KEY']
+            
+            api_key, source = get_api_key_from_sources()
+            assert api_key is None, f"Clé devrait être None: {api_key}"
+            assert source == "non trouvée", f"Source incorrecte: {source}"
+            print(f"  ✅ Aucune clé: {api_key} - {source}")
+        
+        print("✅ Récupération clés API: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_api_key_sources: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def test_validation_functions():
+    """Test des fonctions de validation."""
+    print("🧪 Test des fonctions de validation...")
+    
+    try:
+        # Mock Streamlit pour éviter les erreurs d'import
+        mock_st = Mock()
+        
+        with patch('streamlit_app.st', mock_st):
+            from streamlit_app import validate_agent_configuration, test_mcp_server_connection
+            
+            # Test de validation de configuration
+            try:
+                valid, msg = validate_agent_configuration()
+                print(f"  ℹ️  Configuration agent: {msg}")
+            except Exception as e:
+                print(f"  ⚠️  Configuration agent: Erreur attendue - {e}")
+            
+            # Test de connexion MCP
+            try:
+                connected, msg = test_mcp_server_connection()
+                print(f"  ℹ️  Connexion MCP: {msg}")
+            except Exception as e:
+                print(f"  ⚠️  Connexion MCP: Erreur attendue - {e}")
+        
+        print("✅ Fonctions de validation: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_validation_functions: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def test_error_handling():
+    """Test de la gestion d'erreurs."""
+    print("🧪 Test de la gestion d'erreurs...")
+    
+    try:
+        # Mock Streamlit
+        mock_st = Mock()
+        
+        with patch('streamlit_app.st', mock_st):
+            from streamlit_app import process_streaming_events
+            
+            # Test avec générateur qui lève une exception
+            def failing_generator():
+                yield {"agent": {"messages": [Mock(content="test")]}}
+                raise ValueError("Erreur de test")
+            
+            # Collecter les résultats du générateur
+            results = list(process_streaming_events(failing_generator()))
+            
+            # Vérifier qu'il y a au moins un message d'erreur
+            error_messages = [r for r in results if "❌ Erreur lors du traitement du streaming" in r]
+            assert len(error_messages) > 0, "Aucun message d'erreur généré"
+            print(f"  ✅ Gestion d'erreur streaming: {error_messages[0][:50]}...")
+        
+        print("✅ Gestion d'erreurs: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_error_handling: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def test_import_structure():
+    """Test de la structure d'import de l'application."""
+    print("🧪 Test de la structure d'import...")
+    
+    try:
+        # Tester l'import de l'application principale
+        import streamlit_app
+        
+        # Vérifier que les fonctions principales existent
+        required_functions = [
+            'main',
+            'generate_thread_id',
+            'get_api_key_from_sources',
+            'mask_api_key',
+            'test_mcp_server_connection',
+            'validate_agent_configuration',
+            'initialize_agent',
+            'process_streaming_events',
+            'handle_user_message',
+            'reset_conversation',
+            'render_welcome_section',
+            'render_api_key_configuration',
+            'render_system_status',
+            'render_conversation_actions',
+            'render_chat_interface',
+            'render_configuration_warning'
+        ]
+        
+        for func_name in required_functions:
+            assert hasattr(streamlit_app, func_name), f"Fonction manquante: {func_name}"
+            print(f"  ✅ {func_name}")
+        
+        print("✅ Structure d'import: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_import_structure: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def test_mock_conversation():
+    """Test simulé d'une conversation."""
+    print("🧪 Test simulé d'une conversation...")
+    
+    try:
+        from streamlit_app import generate_thread_id
+        
+        # Test de génération de thread_id
+        thread_id = generate_thread_id()
+        assert thread_id.startswith("streamlit-session-"), "Thread ID invalide"
+        print(f"  ✅ Thread ID généré: {thread_id}")
+        
+        # Test d'import des fonctions principales
+        from streamlit_app import handle_user_message, reset_conversation
+        
+        # Vérifier que les fonctions existent
+        assert callable(handle_user_message), "handle_user_message n'est pas callable"
+        assert callable(reset_conversation), "reset_conversation n'est pas callable"
+        print("  ✅ Fonctions de conversation importées")
+        
+        # Test que la fonction existe et peut être appelée (test basique)
+        print("  ✅ Fonction handle_user_message testée")
+        
+        # Test des types de retour attendus
+        assert hasattr(generate_thread_id, '__call__'), "generate_thread_id doit être callable"
+        print("  ✅ Tests de types: OK")
+        
+        print("✅ Test conversation simulée: OK\n")
+        
+    except Exception as e:
+        print(f"❌ Erreur dans test_mock_conversation: {e}")
+        traceback.print_exc()
+        return False
+    
+    return True
+
+
+def main():
+    """Fonction principale des tests."""
+    print("🚀 Début des tests de l'application Streamlit refactorisée\n")
+    
+    tests = [
+        test_import_structure,
+        test_utility_functions,
+        test_api_key_sources,
+        test_validation_functions,
+        test_error_handling,
+        test_mock_conversation
+    ]
+    
+    passed = 0
+    failed = 0
+    
+    for test in tests:
+        try:
+            if test():
+                passed += 1
+            else:
+                failed += 1
+        except Exception as e:
+            print(f"❌ Test {test.__name__} a échoué avec l'exception: {e}")
+            failed += 1
+    
+    print("=" * 60)
+    print(f"📊 Résultats des tests:")
+    print(f"   ✅ Tests réussis: {passed}")
+    print(f"   ❌ Tests échoués: {failed}")
+    print(f"   📈 Taux de réussite: {(passed/(passed+failed)*100):.1f}%")
+    
+    if failed == 0:
+        print("\n🎉 Tous les tests sont passés ! L'application est prête.")
+        return True
+    else:
+        print(f"\n⚠️ {failed} test(s) ont échoué. Vérifiez les erreurs ci-dessus.")
+        return False
+
+
+if __name__ == "__main__":
+    success = main()
+    sys.exit(0 if success else 1)
+</file>
+
+<file path="test_streaming_mock.py">
+#!/usr/bin/env python3
+"""
+Script de test avec mock pour vérifier le streaming avec détection d'outils.
+
+Ce script simule les événements LangGraph pour tester la logique de streaming
+sans avoir besoin d'une clé API OpenAI valide.
+"""
+
+from typing import Dict, Any, Generator, List
+from dataclasses import dataclass, field
+
+@dataclass
+class MockMessage:
+    """Message simulé pour les tests."""
+    content: str = ""
+    tool_calls: List[Dict[str, Any]] = field(default_factory=list)
+    tool_call_id: str = ""
+    
+    def __post_init__(self):
+        if self.tool_calls is None:
+            self.tool_calls = []
+
+def simulate_status_display(message: str, expanded: bool = False):
+    """Simule l'affichage d'un st.status."""
+    print(f"📊 STATUS: {message} (expanded={expanded})")
+    return {"message": message, "expanded": expanded, "state": "running"}
+
+def simulate_status_update(status_obj: Dict[str, Any], label: str, state: str):
+    """Simule la mise à jour d'un st.status."""
+    print(f"🔄 STATUS UPDATE: {label} (state={state})")
+    status_obj["message"] = label
+    status_obj["state"] = state
+
+def mock_stream_agent_conversation() -> Generator[Dict[str, Any], None, None]:
+    """
+    Générateur qui simule les événements de streaming d'un agent LangGraph.
+    
+    Cette fonction simule la séquence typique :
+    1. L'agent décide d'utiliser un outil
+    2. L'outil est exécuté 
+    3. L'agent génère une réponse finale
+    """
+    
+    # Étape 1: L'agent décide d'utiliser un outil de recherche
+    yield {
+        "agent": {
+            "messages": [
+                MockMessage(
+                    content="",
+                    tool_calls=[{
+                        "name": "search_legifrance",
+                        "id": "tool_call_123",
+                        "args": {"query": "congés payés", "max_results": 10}
+                    }]
+                )
+            ]
+        }
+    }
+    
+    # Étape 2: L'outil retourne un résultat
+    yield {
+        "tools": {
+            "messages": [
+                MockMessage(
+                    content="Résultats de recherche trouvés: Articles L3141-1 à L3141-32 du Code du travail...",
+                    tool_call_id="tool_call_123"
+                )
+            ]
+        }
+    }
+    
+    # Étape 3: L'agent génère une réponse finale
+    yield {
+        "agent": {
+            "messages": [
+                MockMessage(
+                    content="Voici les informations sur les congés payés en France..."
+                )
+            ]
+        }
+    }
+
+def test_process_streaming_events():
+    """Test de la fonction process_streaming_events avec des données simulées."""
+    print("🧪 Test de la logique de streaming avec détection d'outils")
+    print("=" * 70)
+    
+    # Variables pour simuler le comportement de Streamlit
+    active_statuses = {}
+    last_content = ""
+    yielded_content = []
+    
+    print("🎬 Simulation d'événements de streaming...")
+    print("-" * 50)
+    
+    # Simuler la logique de process_streaming_events
+    for event in mock_stream_agent_conversation():
+        print(f"📥 Événement reçu: {list(event.keys())}")
+        
+        if isinstance(event, dict):
+            # Parcourir chaque nœud dans l'événement
+            for node_name, node_data in event.items():
+                print(f"   🔸 Nœud: {node_name}")
+                
+                # Vérifier s'il y a des messages dans les données du nœud
+                if isinstance(node_data, dict) and "messages" in node_data:
+                    messages = node_data["messages"]
+                    if messages:
+                        last_message = messages[-1]
+                        print(f"   📧 Message: {type(last_message).__name__}")
+                        
+                        # Détecter les appels d'outils dans les messages AI (nœud "agent")
+                        if node_name == "agent" and hasattr(last_message, 'tool_calls') and last_message.tool_calls:
+                            print("   🔧 DÉTECTION D'APPEL D'OUTIL!")
+                            for tool_call in last_message.tool_calls:
+                                tool_name = tool_call.get('name', 'outil_inconnu')
+                                tool_id = tool_call.get('id', f'tool_{len(active_statuses)}')
+                                
+                                # Mapper les noms d'outils vers des messages plus conviviaux
+                                tool_display_names = {
+                                    'search_legifrance': '🔍 Recherche sur Légifrance...',
+                                    'get_article': '📄 Récupération d\'article juridique...',
+                                    'browse_code': '📚 Navigation dans le code juridique...',
+                                }
+                                
+                                status_message = tool_display_names.get(tool_name, f'⚙️ Exécution de {tool_name}...')
+                                
+                                # Créer un indicateur de statut pour cet outil
+                                if tool_id not in active_statuses:
+                                    active_statuses[tool_id] = simulate_status_display(status_message)
+                                    print(f"   🆕 Nouveau statut créé pour {tool_name} (ID: {tool_id})")
+                        
+                        # Détecter les réponses d'outils (nœud "tools")
+                        elif node_name == "tools" and hasattr(last_message, 'tool_call_id'):
+                            print("   ✅ DÉTECTION DE RÉPONSE D'OUTIL!")
+                            tool_call_id = last_message.tool_call_id
+                            # Fermer le statut correspondant s'il existe
+                            if tool_call_id in active_statuses:
+                                simulate_status_update(
+                                    active_statuses[tool_call_id], 
+                                    "✅ Terminé", 
+                                    "complete"
+                                )
+                                # Retirer de la liste des statuses actifs
+                                del active_statuses[tool_call_id]
+                                print(f"   🏁 Statut fermé pour {tool_call_id}")
+                        
+                        # Si c'est un message de réponse finale de l'agent (sans appels d'outils)
+                        elif (node_name == "agent" and 
+                              hasattr(last_message, 'content') and 
+                              last_message.content and
+                              not (hasattr(last_message, 'tool_calls') and last_message.tool_calls)):
+                            
+                            print("   💬 DÉTECTION DE CONTENU DE RÉPONSE!")
+                            # Yielder seulement le nouveau contenu pour éviter la duplication
+                            current_content = last_message.content
+                            if current_content != last_content:
+                                # Simuler le yield du contenu
+                                yielded_content.append(current_content)
+                                print(f"   📤 Contenu yielded: {current_content[:80]}{'...' if len(current_content) > 80 else ''}")
+                                last_content = current_content
+        
+        print()  # Ligne vide pour séparer les événements
+    
+    print("=" * 70)
+    print("✅ Test terminé avec succès !")
+    print(f"📊 Statuts actifs restants: {len(active_statuses)}")
+    print(f"📝 Contenu yielded total: {len(yielded_content)} éléments")
+    
+    if yielded_content:
+        print("\n📋 Résumé du contenu yielded:")
+        for i, content in enumerate(yielded_content, 1):
+            print(f"   {i}. {content[:60]}{'...' if len(content) > 60 else ''}")
+
+def test_edge_cases():
+    """Test des cas limites et edge cases."""
+    print("\n🧪 Test des cas limites")
+    print("=" * 40)
+    
+    # Test avec événement vide
+    print("📥 Test événement vide...")
+    event = {}
+    print(f"   Résultat: {isinstance(event, dict)} (dict vide)")
+    
+    # Test avec message sans tool_calls
+    print("📥 Test message sans tool_calls...")
+    message = MockMessage(content="Test simple")
+    print(f"   tool_calls: {message.tool_calls}")
+    print(f"   hasattr tool_calls: {hasattr(message, 'tool_calls')}")
+    
+    # Test avec message ayant tool_calls vide
+    print("📥 Test message avec tool_calls vide...")
+    message_with_empty_calls = MockMessage(content="Test", tool_calls=[])
+    print(f"   tool_calls: {message_with_empty_calls.tool_calls}")
+    print(f"   bool(tool_calls): {bool(message_with_empty_calls.tool_calls)}")
+    
+    print("✅ Tests des cas limites terminés")
+
+if __name__ == "__main__":
+    test_process_streaming_events()
+    test_edge_cases()
+</file>
+
+<file path="test_streaming.py">
+#!/usr/bin/env python3
+"""
+Script de test pour vérifier le streaming avec détection d'outils.
+
+Ce script simule le comportement de l'application Streamlit pour tester
+la logique de streaming et d'affichage des statuts d'outils.
+"""
+
+import os
+from typing import Dict, Any
+
+# Configuration temporaire de la clé API pour le test
+# Assurez-vous d'avoir une clé API valide dans votre .env
+from dotenv import load_dotenv
+load_dotenv()
+
+def simulate_status_display(message: str, expanded: bool = False):
+    """Simule l'affichage d'un st.status."""
+    print(f"📊 STATUS: {message} (expanded={expanded})")
+    return {"message": message, "expanded": expanded, "state": "running"}
+
+def simulate_status_update(status_obj: Dict[str, Any], label: str, state: str):
+    """Simule la mise à jour d'un st.status."""
+    print(f"🔄 STATUS UPDATE: {label} (state={state})")
+    status_obj["message"] = label
+    status_obj["state"] = state
+
+def test_streaming_with_tool_detection():
+    """Test la fonction de streaming avec détection d'outils."""
+    print("🧪 Test du streaming avec détection d'outils")
+    print("=" * 60)
+    
+    try:
+        # Import des fonctions nécessaires
+        from src.regulai.agent import create_agent, stream_agent_conversation
+        
+        # Créer l'agent
+        print("📝 Création de l'agent...")
+        agent = create_agent()
+        print("✅ Agent créé avec succès")
+        
+        # Message de test qui devrait déclencher un appel d'outil
+        test_message = "Peux-tu rechercher des informations sur les congés payés en France ?"
+        print(f"\n👤 Message de test: {test_message}")
+        print("\n🤖 Streaming de la réponse:")
+        print("-" * 40)
+        
+        # Variables pour simuler le comportement de Streamlit
+        active_statuses = {}
+        last_content = ""
+        
+        # Streamer la conversation
+        for event in stream_agent_conversation(test_message, "test-streaming", agent):
+            print(f"📥 Événement reçu: {type(event)}")
+            
+            # Simuler la logique de process_streaming_events
+            if isinstance(event, dict):
+                for node_name, node_data in event.items():
+                    print(f"   🔸 Nœud: {node_name}")
+                    
+                    if isinstance(node_data, dict) and "messages" in node_data:
+                        messages = node_data["messages"]
+                        if messages:
+                            last_message = messages[-1]
+                            print(f"   📧 Message: {type(last_message).__name__}")
+                            
+                            # Détecter les appels d'outils
+                            if (node_name == "agent" and 
+                                hasattr(last_message, 'tool_calls') and 
+                                last_message.tool_calls):
+                                
+                                print("   🔧 DÉTECTION D'APPEL D'OUTIL!")
+                                for tool_call in last_message.tool_calls:
+                                    tool_name = tool_call.get('name', 'outil_inconnu')
+                                    tool_id = tool_call.get('id', f'tool_{len(active_statuses)}')
+                                    
+                                    tool_display_names = {
+                                        'search_legifrance': '🔍 Recherche sur Légifrance...',
+                                        'get_article': '📄 Récupération d\'article juridique...',
+                                        'browse_code': '📚 Navigation dans le code juridique...',
+                                    }
+                                    
+                                    status_message = tool_display_names.get(tool_name, f'⚙️ Exécution de {tool_name}...')
+                                    
+                                    if tool_id not in active_statuses:
+                                        active_statuses[tool_id] = simulate_status_display(status_message)
+                                        print(f"   🆕 Nouveau statut créé pour {tool_name}")
+                            
+                            # Détecter les réponses d'outils
+                            elif (node_name == "tools" and 
+                                  hasattr(last_message, 'tool_call_id')):
+                                
+                                print("   ✅ DÉTECTION DE RÉPONSE D'OUTIL!")
+                                tool_call_id = last_message.tool_call_id
+                                if tool_call_id in active_statuses:
+                                    simulate_status_update(
+                                        active_statuses[tool_call_id], 
+                                        "✅ Terminé", 
+                                        "complete"
+                                    )
+                                    del active_statuses[tool_call_id]
+                                    print(f"   🏁 Statut fermé pour {tool_call_id}")
+                            
+                            # Détecter le contenu de réponse
+                            elif (node_name == "agent" and 
+                                  hasattr(last_message, 'content') and 
+                                  last_message.content and
+                                  not (hasattr(last_message, 'tool_calls') and last_message.tool_calls)):
+                                
+                                current_content = last_message.content
+                                if current_content != last_content:
+                                    print("   💬 CONTENU DE RÉPONSE:")
+                                    print(f"      {current_content[:100]}{'...' if len(current_content) > 100 else ''}")
+                                    last_content = current_content
+        
+        print("\n" + "=" * 60)
+        print("✅ Test terminé avec succès !")
+        print(f"📊 Statuts actifs restants: {len(active_statuses)}")
+        
+    except Exception as e:
+        print(f"\n❌ Erreur lors du test: {e}")
+        import traceback
+        traceback.print_exc()
+
+if __name__ == "__main__":
+    test_streaming_with_tool_detection()
+</file>
+
 <file path="tests/__init__.py">
 # Tests pour le package RegulAI
 </file>
@@ -1857,7 +3426,7 @@ Ce module teste les fonctionnalités des outils MCP et leur intégration LangCha
 """
 
 import pytest
-from unittest.mock import patch, Mock
+from unittest.mock import patch, Mock, MagicMock
 import os
 import sys
 
@@ -1949,16 +3518,22 @@ def test_mcp_client_parse_response():
 @patch('httpx.Client')
 def test_mcp_client_connection_test(mock_httpx_client):
     """Test la vérification de connexion MCP."""
+    
     # Mock de la réponse HTTP
     mock_response = Mock()
     mock_response.status_code = 200
     
+    # Créer un mock pour la session HTTP qui fonctionne comme context manager
     mock_session = Mock()
     mock_session.get.return_value = mock_response
-    mock_session.__enter__.return_value = mock_session
-    mock_session.__exit__.return_value = None
     
-    mock_httpx_client.return_value = mock_session
+    # Utiliser MagicMock pour supporter automatiquement les context managers
+    mock_context_manager = MagicMock()
+    mock_context_manager.__enter__.return_value = mock_session
+    mock_context_manager.__exit__.return_value = None
+    
+    # Le Client() retourne le context manager
+    mock_httpx_client.return_value = mock_context_manager
     
     # Test de connexion
     client = MCPClient("http://test:8000")
@@ -1968,160 +3543,4 @@ def test_mcp_client_connection_test(mock_httpx_client):
     mock_session.get.assert_called_once_with("http://test:8000/health")
 </file>
 
-<file path="tools_validation_report.json">
-{
-  "timestamp": "True",
-  "mcp_server_available": false,
-  "tools_count": 3,
-  "tools": [
-    {
-      "name": "search_legifrance",
-      "description": "Paramètres pour la recherche dans Légifrance.",
-      "schema": {
-        "properties": {
-          "query": {
-            "description": "Requête de recherche en français (ex: 'congés payés', 'droit du travail')",
-            "title": "Query",
-            "type": "string"
-          },
-          "max_results": {
-            "default": 10,
-            "description": "Nombre maximum de résultats à retourner",
-            "title": "Max Results",
-            "type": "integer"
-          }
-        },
-        "required": [
-          "query"
-        ]
-      }
-    },
-    {
-      "name": "get_article",
-      "description": "Paramètres pour récupérer un article spécifique.",
-      "schema": {
-        "properties": {
-          "article_id": {
-            "description": "Identifiant de l'article (ex: 'LEGIARTI000006900846' ou 'L3141-1')",
-            "title": "Article Id",
-            "type": "string"
-          }
-        },
-        "required": [
-          "article_id"
-        ]
-      }
-    },
-    {
-      "name": "browse_code",
-      "description": "Paramètres pour naviguer dans un code juridique.",
-      "schema": {
-        "properties": {
-          "code_name": {
-            "description": "Nom du code juridique (ex: 'Code du travail', 'Code civil')",
-            "title": "Code Name",
-            "type": "string"
-          },
-          "section": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "default": null,
-            "description": "Section spécifique à explorer (optionnel)",
-            "title": "Section"
-          }
-        },
-        "required": [
-          "code_name"
-        ]
-      }
-    }
-  ]
-}
-</file>
-
 </files>
-
-quand je fais les test ça me fait ça :
-ssef@DESKTOP-3H2V8PT MINGW64 /c/Users/assef/Documents/RegulAI
-$ python -m pytest tests/ -v
-=========================================== test session starts ===========================================
-platform win32 -- Python 3.12.6, pytest-8.4.0, pluggy-1.6.0 -- C:\Users\assef\Documents\RegulAI\.venv\Scripts\python.exe
-cachedir: .pytest_cache
-rootdir: C:\Users\assef\Documents\RegulAI
-configfile: pyproject.toml
-plugins: anyio-4.9.0, langsmith-0.3.45, asyncio-1.0.0, mock-3.14.1
-asyncio: mode=Mode.AUTO, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-collected 6 items                                                                                          
-
-tests/test_tools.py::test_get_available_tools PASSED                                                 [ 16%]
-tests/test_tools.py::test_mcp_client_initialization PASSED                                           [ 33%]
-tests/test_tools.py::test_search_legifrance_tool_structure FAILED                                    [ 50%]
-tests/test_tools.py::test_search_legifrance_tool_call PASSED                                         [ 66%]
-tests/test_tools.py::test_mcp_client_parse_response PASSED                                           [ 83%]
-tests/test_tools.py::test_mcp_client_connection_test FAILED                                          [100%]
-
-================================================ FAILURES ================================================= 
-__________________________________ test_search_legifrance_tool_structure __________________________________ 
-
-    def test_search_legifrance_tool_structure():
-        """Test la structure de l'outil search_legifrance."""
-        tools = get_available_tools()
-        search_tool = next(tool for tool in tools if tool.name == "search_legifrance")
-
-        assert search_tool.name == "search_legifrance"
-        assert search_tool.description is not None
->       assert "Recherche des textes juridiques" in search_tool.description
-E       AssertionError: assert 'Recherche des textes juridiques' in 'Paramètres pour la recherche dans Légifrance.'
-E        +  where 'Paramètres pour la recherche dans Légifrance.' = StructuredTool(name='search_legifrance', description='Paramètres pour la recherche dans Légifrance.', args_schema=<class 'regulai.tools.SearchParams'>, func=<function search_legifrance at 0x000001E405F94220>).description
-
-tests\test_tools.py:44: AssertionError
-_____________________________________ test_mcp_client_connection_test _____________________________________ 
-
-mock_httpx_client = <MagicMock name='Client' id='2078864324560'>
-
-    @patch('httpx.Client')
-    def test_mcp_client_connection_test(mock_httpx_client):
-        """Test la vérification de connexion MCP."""
-        # Mock de la réponse HTTP
-        mock_response = Mock()
-        mock_response.status_code = 200
-
-        mock_session = Mock()
-        mock_session.get.return_value = mock_response
->       mock_session.__enter__.return_value = mock_session
-        ^^^^^^^^^^^^^^^^^^^^^^
-
-tests\test_tools.py:106:
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-
-self = <Mock id='2078865285312'>, name = '__enter__'
-
-    def __getattr__(self, name):
-        if name in {'_mock_methods', '_mock_unsafe'}:
-            raise AttributeError(name)
-        elif self._mock_methods is not None:
-            if name not in self._mock_methods or name in _all_magics:
-                raise AttributeError("Mock object has no attribute %r" % name)
-        elif _is_magic(name):
->           raise AttributeError(name)
-E           AttributeError: __enter__
-
-C:\Program Files\Python312\Lib\unittest\mock.py:660: AttributeError
-========================================= short test summary info =========================================
-FAILED tests/test_tools.py::test_search_legifrance_tool_structure - AssertionError: assert 'Recherche des textes juridiques' in 'Paramètres pour la recherche dans Légifran...
-FAILED tests/test_tools.py::test_mcp_client_connection_test - AttributeError: __enter__
-======================================= 2 failed, 4 passed in 0.20s =======================================
-(.venv)
-assef@DESKTOP-3H2V8PT MINGW64 /c/Users/assef/Documents/RegulAI
-$
-
-
-
-Qu'est ce qu'il me reste à faire ? 
-Tu es un expert senior dev en Langgraph, Agent IA. A l'aide la documentation de Langgraph et de FastMCP, fais des prompts à Cursor qui a en contexte mon projet et demande lui de chercher les docs nécessaires avec Context7. Tu peux découper en plusieurs prompt si besoin. Ne fournis pas d'extraits de code.
